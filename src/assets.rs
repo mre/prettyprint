@@ -166,14 +166,14 @@ impl HighlightingAssets {
     pub fn get_syntax(
         &self,
         language: Option<&str>,
-        filename: InputFile,
+        filename: &InputFile,
         reader: &mut InputFileReader,
         mapping: &SyntaxMapping,
     ) -> &SyntaxReference {
         let syntax = match (language, filename) {
             (Some(language), _) => self.syntax_set.find_syntax_by_token(language),
             (None, InputFile::Ordinary(filename)) => {
-                let path = Path::new(filename);
+                let path = Path::new(&filename);
                 let file_name = path.file_name().and_then(|n| n.to_str()).unwrap_or("");
                 let extension = path.extension().and_then(|x| x.to_str()).unwrap_or("");
 

@@ -47,17 +47,16 @@ impl<'a> InputFileReader<'a> {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub enum InputFile<'a> {
+#[derive(Debug, Clone, PartialEq)]
+pub enum InputFile {
     StdIn,
-    Ordinary(&'a str),
+    Ordinary(String),
     ThemePreviewFile,
 }
 
-impl<'a> InputFile<'a> {
-    pub fn get_reader(&self, stdin: &'a io::Stdin) -> Result<InputFileReader> {
+impl InputFile {
+    pub fn get_reader(&self) -> Result<InputFileReader> {
         match self {
-            InputFile::StdIn => Ok(InputFileReader::new(stdin.lock())),
             InputFile::Ordinary(filename) => {
                 let file = File::open(filename)?;
 
@@ -68,6 +67,7 @@ impl<'a> InputFile<'a> {
                 Ok(InputFileReader::new(BufReader::new(file)))
             }
             InputFile::ThemePreviewFile => Ok(InputFileReader::new(THEME_PREVIEW_FILE)),
+            _ => unimplemented!(), // Used to be InputFile::Stdin
         }
     }
 }

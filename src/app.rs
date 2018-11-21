@@ -32,7 +32,7 @@ pub enum PagingMode {
 #[derive(Clone)]
 pub struct Config<'a> {
     /// List of files to print
-    pub files: Vec<InputFile<'a>>,
+    pub files: Vec<InputFile>,
 
     /// The explicitly configured language, if any
     pub language: Option<&'a str>,
@@ -131,8 +131,7 @@ impl App {
         Ok(clap_app::build_app(interactive_output).get_matches_from(args))
     }
 
-    pub fn config(&self) -> Result<Config> {
-        let files = self.files();
+    pub fn config(&self, files: Vec<InputFile>) -> Result<Config> {
         let output_components = self.output_components()?;
 
         let paging_mode = match self.matches.value_of("paging") {
@@ -224,8 +223,7 @@ impl App {
                     } else {
                         w.parse().ok()
                     }
-                })
-                .unwrap_or(Term::stdout().size().1 as usize),
+                }).unwrap_or(Term::stdout().size().1 as usize),
             loop_through: !(self.interactive_output
                 || self.matches.value_of("color") == Some("always")
                 || self.matches.value_of("decorations") == Some("always")),
@@ -254,8 +252,7 @@ impl App {
                     self.matches
                         .values_of("line-range")
                         .map(|vs| vs.map(LineRange::from).collect()),
-                )?
-                .unwrap_or(vec![]),
+                )?.unwrap_or(vec![]),
             ),
             output_components,
             syntax_mapping,
@@ -265,23 +262,6 @@ impl App {
                 _ => false,
             },
         })
-    }
-
-    fn files(&self) -> Vec<InputFile> {
-        self.matches
-            .values_of("FILE")
-            .map(|values| {
-                values
-                    .map(|filename| {
-                        if filename == "-" {
-                            InputFile::StdIn
-                        } else {
-                            InputFile::Ordinary(filename)
-                        }
-                    })
-                    .collect()
-            })
-            .unwrap_or_else(|| vec![InputFile::StdIn])
     }
 
     fn output_components(&self) -> Result<OutputComponents> {
@@ -310,8 +290,7 @@ impl App {
                             .map(|style| style.parse::<OutputComponent>())
                             .filter_map(|style| style.ok())
                             .collect::<Vec<_>>()
-                    })
-                    .or(env_style_components)
+                    }).or(env_style_components)
                     .unwrap_or(vec![OutputComponent::Full])
                     .into_iter()
                     .map(|style| style.components(self.interactive_output))

@@ -27,7 +27,7 @@ use style::OutputWrap;
 use terminal::{as_terminal_escaped, to_ansi_color};
 
 pub trait Printer {
-    fn print_header(&mut self, handle: &mut Write, file: InputFile) -> Result<()>;
+    fn print_header(&mut self, handle: &mut Write, file: &InputFile) -> Result<()>;
     fn print_footer(&mut self, handle: &mut Write) -> Result<()>;
     fn print_line(
         &mut self,
@@ -47,7 +47,7 @@ impl SimplePrinter {
 }
 
 impl Printer for SimplePrinter {
-    fn print_header(&mut self, _handle: &mut Write, _file: InputFile) -> Result<()> {
+    fn print_header(&mut self, _handle: &mut Write, _file: &InputFile) -> Result<()> {
         Ok(())
     }
 
@@ -85,7 +85,7 @@ impl<'a> InteractivePrinter<'a> {
     pub fn new(
         config: &'a Config,
         assets: &'a HighlightingAssets,
-        file: InputFile,
+        file: &InputFile,
         reader: &mut InputFileReader,
     ) -> Self {
         let theme = assets.get_theme(&config.theme);
@@ -134,7 +134,7 @@ impl<'a> InteractivePrinter<'a> {
             // Get the Git modifications
             line_changes = if config.output_components.changes() {
                 match file {
-                    InputFile::Ordinary(filename) => get_git_diff(filename),
+                    InputFile::Ordinary(filename) => get_git_diff(&filename),
                     _ => None,
                 }
             } else {
@@ -185,7 +185,7 @@ impl<'a> InteractivePrinter<'a> {
 }
 
 impl<'a> Printer for InteractivePrinter<'a> {
-    fn print_header(&mut self, handle: &mut Write, file: InputFile) -> Result<()> {
+    fn print_header(&mut self, handle: &mut Write, file: &InputFile) -> Result<()> {
         if !self.config.output_components.header() {
             return Ok(());
         }
@@ -207,7 +207,8 @@ impl<'a> Printer for InteractivePrinter<'a> {
 
         let (prefix, name) = match file {
             InputFile::Ordinary(filename) => ("File: ", filename),
-            _ => ("", "STDIN"),
+            // _ => ("", &"STDIN".to_string()),
+            _ => unimplemented!(),
         };
 
         let mode = match self.content_type {
@@ -383,8 +384,7 @@ impl<'a> Printer for InteractivePrinter<'a> {
                                                 .iter()
                                                 .map(|ref d| d
                                                     .generate(line_number, true, self)
-                                                    .text)
-                                                .collect::<Vec<String>>()
+                                                    .text).collect::<Vec<String>>()
                                                 .join(" ")
                                         ))
                                     } else {

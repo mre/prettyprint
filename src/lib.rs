@@ -42,7 +42,7 @@ mod util;
 use std::collections::HashSet;
 use std::io;
 use std::io::Write;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process;
 
 use ansi_term::Colour::Green;
@@ -197,9 +197,18 @@ fn run_controller(config: &Config) -> Result<bool> {
 
 /// Returns `Err(..)` upon fatal errors. Otherwise, returns `Some(true)` on full success and
 /// `Some(false)` if any intermediate errors occurred (were printed).
-fn run() -> Result<bool> {
+pub fn run(inputs: Vec<String>) -> Result<bool> {
+    let files = inputs
+        .iter()
+        .map(|filename| {
+            if filename == "-" {
+                InputFile::StdIn
+            } else {
+                InputFile::Ordinary(filename.to_string())
+            }
+        }).collect();
     let app = App::new()?;
-    let config = app.config()?;
+    let config = app.config(files)?;
     run_controller(&config);
     Ok(true)
 }
@@ -213,10 +222,11 @@ mod tests {
     #[test]
     fn it_works() {
         // Pretty prints its own code
-        let mut file = File::open("src/lib.rs").unwrap();
-        let mut buf = String::new();
-        file.read_to_string(&mut buf).unwrap();
-        println!("{:?}", file);
+        // let mut file = File::open("src/lib.rs").unwrap();
+        // let mut buf = String::new();
+        // file.read_to_string(&mut buf).unwrap();
+        // println!("{:?}", file);
+        run(vec!["src/lib.rs".to_string()]);
     }
 
 }
