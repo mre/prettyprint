@@ -1,0 +1,20 @@
+[package]
+name = "prettier"
+version = "0.1.0"
+authors = ["Matthias Endler <matthias-endler@gmx.net>"]
+
+[dependencies]
+ansi_colours = "1.0.1"
+error-chain = "0.12.0"
+ansi_term = "0.11.0"
+clap = "2.32.0"
+console = "0.6.2"
+content_inspector = "0.2.4"
+directories = "1.0.2"
+encoding = "0.2.33"
+git2 = "0.7.5"
+shell-words = "0.1.0"
+syntect = "3.0.2"
+wild = "2.0.1"
+lazy_static = "1.2.0"
+atty = "0.2.11"
