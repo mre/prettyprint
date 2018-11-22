@@ -177,16 +177,10 @@ pub fn run(inputs: Vec<String>) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::fs::File;
-    use std::io::Read;
 
+    /// Pretty prints its own code
     #[test]
     fn it_works() {
-        // Pretty prints its own code
-        // let mut file = File::open("src/lib.rs").unwrap();
-        // let mut buf = String::new();
-        // file.read_to_string(&mut buf).unwrap();
-        // println!("{:?}", file);
         run(vec!["src/lib.rs".to_string()]);
     }
 
