@@ -38,9 +38,10 @@ impl PrettyPrint {
                     InputFile::Ordinary(filename.to_string())
                 }
             }).collect();
-        let app = App::new()?;
 
         let assets = HighlightingAssets::new();
+
+        let app = App::new()?;
         let config = app.config(files)?;
         let controller = Controller::new(&config, &assets);
         controller.run()

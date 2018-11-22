@@ -66,10 +66,6 @@ impl FromStr for OutputComponent {
 pub struct OutputComponents(pub HashSet<OutputComponent>);
 
 impl OutputComponents {
-    pub fn changes(&self) -> bool {
-        self.0.contains(&OutputComponent::Changes)
-    }
-
     pub fn grid(&self) -> bool {
         self.0.contains(&OutputComponent::Grid)
     }

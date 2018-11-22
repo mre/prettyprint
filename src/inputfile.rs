@@ -5,8 +5,6 @@ use content_inspector::{self, ContentType};
 
 use errors::*;
 
-const THEME_PREVIEW_FILE: &[u8] = include_bytes!("../assets/theme_preview.rs");
-
 pub struct InputFileReader<'a> {
     inner: Box<dyn BufRead + 'a>,
     pub first_line: Vec<u8>,
@@ -51,7 +49,6 @@ impl<'a> InputFileReader<'a> {
 pub enum InputFile {
     StdIn,
     Ordinary(String),
-    ThemePreviewFile,
 }
 
 impl InputFile {
@@ -66,7 +63,6 @@ impl InputFile {
 
                 Ok(InputFileReader::new(BufReader::new(file)))
             }
-            InputFile::ThemePreviewFile => Ok(InputFileReader::new(THEME_PREVIEW_FILE)),
             _ => unimplemented!(), // Used to be InputFile::Stdin
         }
     }
