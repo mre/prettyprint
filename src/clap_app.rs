@@ -86,8 +86,8 @@ pub fn build_app(interactive_output: bool) -> ClapApp<'static, 'static> {
                     "Set the theme for syntax highlighting. Use '--list-themes' to \
                      see all available themes. To set a default theme, add the \
                      '--theme=\"...\"' option to the configuration file or export the \
-                     BAT_THEME environment variable (e.g.: export \
-                     BAT_THEME=\"...\").",
+                     PRETTYPRINT_THEME environment variable (e.g.: export \
+                     PRETTYPRINT_THEME=\"...\").",
                 ),
         )
         .arg(
@@ -133,7 +133,7 @@ pub fn build_app(interactive_output: bool) -> ClapApp<'static, 'static> {
                      components to display (e.g. 'numbers,changes,grid') or a \
                      pre-defined style ('full'). To set a default style, add the \
                      '--style=\"..\"' option to the configuration file or export the \
-                     BAT_STYLE environment variable (e.g.: export BAT_STYLE=\"..\"). \
+                     PRETTYPRINT_STYLE environment variable (e.g.: export PRETTYPRINT_STYLE=\"..\"). \
                      Possible values: *auto*, full, plain, changes, header, grid, numbers.",
                 ),
         )
@@ -243,9 +243,9 @@ pub fn build_app(interactive_output: bool) -> ClapApp<'static, 'static> {
                 .help("Specify when to use the pager (*auto*, never, always).")
                 .long_help(
                     "Specify when to use the pager. To control which pager \
-                     is used, set the PAGER or BAT_PAGER environment \
+                     is used, set the PAGER or PRETTYPRINT_PAGER environment \
                      variables (the latter takes precedence) or use the '--pager' option. \
-                     To disable the pager permanently, set BAT_PAGER to an empty string \
+                     To disable the pager permanently, set PRETTYPRINT_PAGER to an empty string \
                      or set '--paging=never' in the configuration file. \
                      Possible values: *auto*, never, always.",
                 ),
@@ -260,7 +260,7 @@ pub fn build_app(interactive_output: bool) -> ClapApp<'static, 'static> {
                 .help("Determine which pager to use.")
                 .long_help(
                     "Determine which pager is used. This option will overwrite \
-                     the PAGER and BAT_PAGER environment variables. The default \
+                     the PAGER and PRETTYPRINT_PAGER environment variables. The default \
                      pager is 'less'. To disable the pager completely, use the \
                      '--paging' option. \
                      Example: '--pager \"less -RF\"'.",
@@ -358,7 +358,7 @@ pub fn build_app(interactive_output: bool) -> ClapApp<'static, 'static> {
                     Arg::with_name("config-dir")
                         .long("config-dir")
                         .short("d")
-                        .help("Show bat's configuration directory."),
+                        .help("Show prettyprint's configuration directory."),
                 )
                 .group(
                     ArgGroup::with_name("cache-actions")

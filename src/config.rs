@@ -9,7 +9,7 @@ use dirs::PROJECT_DIRS;
 use util::transpose;
 
 pub fn config_file() -> PathBuf {
-    env::var("BAT_CONFIG_PATH")
+    env::var("PRETTYPRINT_CONFIG_PATH")
         .ok()
         .map(PathBuf::from)
         .filter(|config_path| config_path.is_file())
@@ -25,7 +25,9 @@ pub fn get_args_from_config_file() -> Result<Vec<OsString>, shell_words::ParseEr
 }
 
 pub fn get_args_from_env_var() -> Option<Result<Vec<OsString>, shell_words::ParseError>> {
-    env::var("BAT_OPTS").ok().map(|s| get_args_from_str(&s))
+    env::var("PRETTYPRINT_OPTS")
+        .ok()
+        .map(|s| get_args_from_str(&s))
 }
 
 fn get_args_from_str<'a>(content: &'a str) -> Result<Vec<OsString>, shell_words::ParseError> {
@@ -42,45 +44,4 @@ fn get_args_from_str<'a>(content: &'a str) -> Result<Vec<OsString>, shell_words:
         .flatten()
         .map(|line| line.into())
         .collect())
-}
-
-#[test]
-fn empty() {
-    let args = get_args_from_str("").unwrap();
-    assert!(args.is_empty());
-}
-
-#[test]
-fn single() {
-    assert_eq!(vec!["--plain"], get_args_from_str("--plain").unwrap());
-}
-
-#[test]
-fn multiple() {
-    assert_eq!(
-        vec!["--plain", "--language=cpp"],
-        get_args_from_str("--plain --language=cpp").unwrap()
-    );
-}
-
-#[test]
-fn quotes() {
-    assert_eq!(
-        vec!["--theme", "Sublime Snazzy"],
-        get_args_from_str("--theme \"Sublime Snazzy\"").unwrap()
-    );
-}
-
-#[test]
-fn multi_line() {
-    let config = "
-    -p
-    --style numbers,changes
-
-    --color=always
-    ";
-    assert_eq!(
-        vec!["-p", "--style", "numbers,changes", "--color=always"],
-        get_args_from_str(config).unwrap()
-    );
 }

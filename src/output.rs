@@ -26,7 +26,7 @@ impl OutputType {
 
     /// Try to launch the pager. Fall back to stdout in case of errors.
     fn try_pager(quit_if_one_screen: bool, pager_from_config: Option<&str>) -> Result<Self> {
-        let pager_from_env = env::var("BAT_PAGER").or_else(|_| env::var("PAGER"));
+        let pager_from_env = env::var("PRETTYPRINT_PAGER").or_else(|_| env::var("PAGER"));
 
         let pager = pager_from_config
             .map(|p| p.to_string())
@@ -34,13 +34,13 @@ impl OutputType {
             .unwrap_or(String::from("less"));
 
         let pagerflags = shell_words::split(&pager)
-            .chain_err(|| "Could not parse (BAT_)PAGER environment variable.")?;
+            .chain_err(|| "Could not parse (PRETTYPRINT_)PAGER environment variable.")?;
 
         match pagerflags.split_first() {
             Some((pager_name, mut args)) => {
                 let mut pager_path = PathBuf::from(pager_name);
 
-                if pager_path.file_stem() == Some(&OsString::from("bat")) {
+                if pager_path.file_stem() == Some(&OsString::from("prettyprint")) {
                     pager_path = PathBuf::from("less");
                     args = &[];
                 }

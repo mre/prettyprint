@@ -13,7 +13,7 @@ use console::Term;
 #[cfg(windows)]
 use ansi_term;
 
-use assets::BAT_THEME_DEFAULT;
+use assets::PRETTYPRINT_THEME_DEFAULT;
 use config::{get_args_from_config_file, get_args_from_env_var};
 use errors::*;
 use inputfile::InputFile;
@@ -108,13 +108,13 @@ impl App {
         let args = if wild::args_os().nth(1) == Some("cache".into())
             || wild::args_os().any(|arg| arg == "--no-config")
         {
-            // Skip the arguments in bats config file
+            // Skip the arguments in prettyprints config file
 
             wild::args_os().collect::<Vec<_>>()
         } else {
             let mut cli_args = wild::args_os();
 
-            // Read arguments from bats config file
+            // Read arguments from prettyprints config file
             let mut args = get_args_from_env_var()
                 .unwrap_or_else(|| get_args_from_config_file())
                 .chain_err(|| "Could not parse configuration file")?;
@@ -232,7 +232,7 @@ impl App {
                 .matches
                 .value_of("tabs")
                 .map(String::from)
-                .or_else(|| env::var("BAT_TABS").ok())
+                .or_else(|| env::var("PRETTYPRINT_TABS").ok())
                 .and_then(|t| t.parse().ok())
                 .unwrap_or(
                     if output_components.plain() && paging_mode == PagingMode::Never {
@@ -245,8 +245,8 @@ impl App {
                 .matches
                 .value_of("theme")
                 .map(String::from)
-                .or_else(|| env::var("BAT_THEME").ok())
-                .unwrap_or(String::from(BAT_THEME_DEFAULT)),
+                .or_else(|| env::var("PRETTYPRINT_THEME").ok())
+                .unwrap_or(String::from(PRETTYPRINT_THEME_DEFAULT)),
             line_ranges: LineRanges::from(
                 transpose(
                     self.matches
@@ -275,7 +275,7 @@ impl App {
                 [OutputComponent::Plain].iter().cloned().collect()
             } else {
                 let env_style_components: Option<Vec<OutputComponent>> =
-                    transpose(env::var("BAT_STYLE").ok().map(|style_str| {
+                    transpose(env::var("PRETTYPRINT_STYLE").ok().map(|style_str| {
                         style_str
                             .split(",")
                             .map(|x| OutputComponent::from_str(&x))

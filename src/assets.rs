@@ -12,7 +12,7 @@ use errors::*;
 use inputfile::{InputFile, InputFileReader};
 use syntax_mapping::SyntaxMapping;
 
-pub const BAT_THEME_DEFAULT: &str = "Monokai Extended";
+pub const PRETTYPRINT_THEME_DEFAULT: &str = "Monokai Extended";
 
 pub struct HighlightingAssets {
     pub syntax_set: SyntaxSet,
@@ -75,10 +75,10 @@ impl HighlightingAssets {
                 use ansi_term::Colour::Yellow;
                 eprintln!(
                     "{}: Unknown theme '{}', using default.",
-                    Yellow.paint("[bat warning]"),
+                    Yellow.paint("[prettyprint warning]"),
                     theme
                 );
-                &self.theme_set.themes[BAT_THEME_DEFAULT]
+                &self.theme_set.themes[PRETTYPRINT_THEME_DEFAULT]
             }
         }
     }

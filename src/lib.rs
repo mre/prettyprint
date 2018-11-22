@@ -179,7 +179,7 @@ mod tests {
     /// Pretty prints its own code
     #[test]
     fn it_works() {
-        run(vec!["src/lib.rs".to_string()]);
+        run(vec!["src/lib.rs".to_string()]).unwrap();
     }
 
 }

@@ -1,10 +1,10 @@
-## Syntax Highlighting in bat
+## Syntax Highlighting in prettyprint
 
-`bat` uses the [syntect](https://github.com/trishume/syntect) library to highlight source
+`prettyprint` uses the [syntect](https://github.com/trishume/syntect) library to highlight source
 code. As a basis, syntect uses [Sublime Text](https://www.sublimetext.com/) syntax definitions
 in the `.sublime-syntax` format.
 
-In order to add new syntaxes to `bat`, follow these steps:
+In order to add new syntaxes to `prettyprint`, follow these steps:
 
 1. Find a Sublime Text syntax for the given language, preferably in a separate Git repository
    which can be included as a submodule (under `assets/syntaxes`).
@@ -13,16 +13,16 @@ In order to add new syntaxes to `bat`, follow these steps:
    Sublime Text and convert it to a `.sublime-syntax` file via *Tools* -> *Developer* ->
    *New Syntax from XXX.tmLanguage...*. Save the new file in the `assets/syntaxes` folder.
 
-3. Run the `create.sh` script. It calls `bat cache --init` to parse all available
+3. Run the `create.sh` script. It calls `prettyprint cache --init` to parse all available
    `.sublime-syntax` files and serialize them to a `syntaxes.bin` file (in this folder).
 
-4. Re-compile `bat`. At compilation time, the `syntaxes.bin` file will be stored inside the
-   `bat` binary.
+4. Re-compile `prettyprint`. At compilation time, the `syntaxes.bin` file will be stored inside the
+   `prettyprint` binary.
 
 ### Troubleshooting
 
 Make sure that the local cache does not interfere with the internally stored syntaxes and
-themes (`bat cache --clear`).
+themes (`prettyprint cache --clear`).
 
 ### Manual modifications
 
