@@ -40,17 +40,7 @@ mod syntax_mapping;
 mod terminal;
 mod util;
 
-use ansi_term::Colour::Green;
-use ansi_term::Style;
-use std::collections::HashSet;
-use std::io;
-use std::io::Write;
-
-use builder::{App, Config, PrettyPrint};
-use controller::Controller;
-use inputfile::InputFile;
-use style::{OutputComponent, OutputComponents};
-
+pub use builder::PrettyPrint;
 mod errors {
     error_chain! {
         foreign_links {
@@ -61,8 +51,6 @@ mod errors {
         }
     }
 }
-
-use errors::*;
 
 #[cfg(test)]
 mod tests {
