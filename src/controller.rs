@@ -1,7 +1,7 @@
 use std::io::Write;
 
-use app::Config;
 use assets::HighlightingAssets;
+use builder::Config;
 use errors::*;
 use inputfile::{InputFile, InputFileReader};
 use line_range::{LineRanges, RangeCheckResult};

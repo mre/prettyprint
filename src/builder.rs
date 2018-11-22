@@ -13,14 +13,39 @@ use console::Term;
 #[cfg(windows)]
 use ansi_term;
 
-use assets::PRETTYPRINT_THEME_DEFAULT;
+use assets::{HighlightingAssets, PRETTYPRINT_THEME_DEFAULT};
 use config::{get_args_from_config_file, get_args_from_env_var};
+use controller::Controller;
 use errors::*;
 use inputfile::InputFile;
 use line_range::{LineRange, LineRanges};
 use style::{OutputComponent, OutputComponents, OutputWrap};
 use syntax_mapping::SyntaxMapping;
 use util::transpose;
+
+#[derive(Default, Builder, Debug)]
+#[builder(setter(into))]
+pub struct PrettyPrint {}
+
+impl PrettyPrint {
+    pub fn run(self, inputs: Vec<String>) -> Result<()> {
+        let files = inputs
+            .iter()
+            .map(|filename| {
+                if filename == "-" {
+                    InputFile::StdIn
+                } else {
+                    InputFile::Ordinary(filename.to_string())
+                }
+            }).collect();
+        let app = App::new()?;
+
+        let assets = HighlightingAssets::new();
+        let config = app.config(files)?;
+        let controller = Controller::new(&config, &assets);
+        controller.run()
+    }
+}
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum PagingMode {

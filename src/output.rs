@@ -6,7 +6,7 @@ use std::process::{Child, Command, Stdio};
 
 use shell_words;
 
-use app::PagingMode;
+use builder::PagingMode;
 use errors::*;
 
 pub enum OutputType {

@@ -15,8 +15,8 @@ use content_inspector::ContentType;
 use encoding::all::{UTF_16BE, UTF_16LE};
 use encoding::{DecoderTrap, Encoding};
 
-use app::Config;
 use assets::HighlightingAssets;
+use builder::Config;
 use decorations::{Decoration, GridBorderDecoration, LineNumberDecoration};
 use errors::*;
 use inputfile::{InputFile, InputFileReader};
