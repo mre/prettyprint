@@ -1,4 +1,4 @@
-use std::io::{self, Write};
+use std::io::Write;
 
 use app::Config;
 use assets::HighlightingAssets;
@@ -6,7 +6,7 @@ use errors::*;
 use inputfile::{InputFile, InputFileReader};
 use line_range::{LineRanges, RangeCheckResult};
 use output::OutputType;
-use printer::{InteractivePrinter, Printer, SimplePrinter};
+use printer::{InteractivePrinter, Printer};
 
 pub struct Controller<'a> {
     config: &'a Config<'a>,
