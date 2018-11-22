@@ -38,37 +38,6 @@ pub trait Printer {
     ) -> Result<()>;
 }
 
-pub struct SimplePrinter;
-
-impl SimplePrinter {
-    pub fn new() -> Self {
-        SimplePrinter {}
-    }
-}
-
-impl Printer for SimplePrinter {
-    fn print_header(&mut self, _handle: &mut Write, _file: &InputFile) -> Result<()> {
-        Ok(())
-    }
-
-    fn print_footer(&mut self, _handle: &mut Write) -> Result<()> {
-        Ok(())
-    }
-
-    fn print_line(
-        &mut self,
-        out_of_range: bool,
-        handle: &mut Write,
-        _line_number: usize,
-        line_buffer: &[u8],
-    ) -> Result<()> {
-        if !out_of_range {
-            handle.write(line_buffer)?;
-        }
-        Ok(())
-    }
-}
-
 pub struct InteractivePrinter<'a> {
     colors: Colors,
     config: &'a Config<'a>,

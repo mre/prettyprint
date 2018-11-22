@@ -39,18 +39,14 @@ mod syntax_mapping;
 mod terminal;
 mod util;
 
+use ansi_term::Colour::Green;
+use ansi_term::Style;
 use std::collections::HashSet;
 use std::io;
 use std::io::Write;
-use std::path::{Path, PathBuf};
-use std::process;
-
-use ansi_term::Colour::Green;
-use ansi_term::Style;
 
 use app::{App, Config};
-use assets::{clear_assets, config_dir, HighlightingAssets};
-use config::config_file;
+use assets::HighlightingAssets;
 use controller::Controller;
 use inputfile::InputFile;
 use style::{OutputComponent, OutputComponents};
@@ -64,41 +60,9 @@ mod errors {
             ParseIntError(::std::num::ParseIntError);
         }
     }
-
-    pub fn handle_error(error: &Error) {
-        match error {
-            &Error(ErrorKind::Io(ref io_error), _)
-                if io_error.kind() == super::io::ErrorKind::BrokenPipe =>
-            {
-                super::process::exit(0);
-            }
-            _ => {
-                use ansi_term::Colour::Red;
-                eprintln!("{}: {}", Red.paint("[bat error]"), error);
-            }
-        };
-    }
 }
 
 use errors::*;
-
-fn run_cache_subcommand(matches: &clap::ArgMatches) -> Result<()> {
-    if matches.is_present("init") {
-        let source_dir = matches.value_of("source").map(Path::new);
-        let target_dir = matches.value_of("target").map(Path::new);
-
-        let blank = matches.is_present("blank");
-
-        let assets = HighlightingAssets::from_files(source_dir, blank)?;
-        assets.save(target_dir)?;
-    } else if matches.is_present("clear") {
-        clear_assets();
-    } else if matches.is_present("config-dir") {
-        writeln!(io::stdout(), "{}", config_dir())?;
-    }
-
-    Ok(())
-}
 
 pub fn list_languages(config: &Config) -> Result<()> {
     let assets = HighlightingAssets::new();
@@ -189,15 +153,13 @@ pub fn list_themes(cfg: &Config) -> Result<()> {
     Ok(())
 }
 
-fn run_controller(config: &Config) -> Result<bool> {
+fn run_controller(config: &Config) -> Result<()> {
     let assets = HighlightingAssets::new();
     let controller = Controller::new(&config, &assets);
     controller.run()
 }
 
-/// Returns `Err(..)` upon fatal errors. Otherwise, returns `Some(true)` on full success and
-/// `Some(false)` if any intermediate errors occurred (were printed).
-pub fn run(inputs: Vec<String>) -> Result<bool> {
+pub fn run(inputs: Vec<String>) -> Result<()> {
     let files = inputs
         .iter()
         .map(|filename| {
@@ -209,8 +171,7 @@ pub fn run(inputs: Vec<String>) -> Result<bool> {
         }).collect();
     let app = App::new()?;
     let config = app.config(files)?;
-    run_controller(&config);
-    Ok(true)
+    run_controller(&config)
 }
 
 #[cfg(test)]

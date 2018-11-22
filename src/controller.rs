@@ -18,7 +18,7 @@ impl<'b> Controller<'b> {
         Controller { config, assets }
     }
 
-    pub fn run(&self) -> Result<bool> {
+    pub fn run(&self) -> Result<()> {
         let mut output_type = OutputType::from_mode(self.config.paging_mode, self.config.pager)?;
         let writer = output_type.handle()?;
 
@@ -26,10 +26,9 @@ impl<'b> Controller<'b> {
             let mut reader = input_file.get_reader()?;
             let mut printer =
                 InteractivePrinter::new(&self.config, &self.assets, input_file, &mut reader);
-            self.print_file(reader, &mut printer, writer, input_file);
+            self.print_file(reader, &mut printer, writer, input_file)?;
         }
-
-        Ok(true)
+        Ok(())
     }
 
     fn print_file<'a, P: Printer>(
