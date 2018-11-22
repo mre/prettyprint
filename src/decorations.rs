@@ -1,5 +1,4 @@
 use ansi_term::Style;
-use diff::LineChange;
 use printer::{Colors, InteractivePrinter};
 
 #[derive(Clone)]
@@ -65,61 +64,6 @@ impl Decoration for LineNumberDecoration {
 
     fn width(&self) -> usize {
         4
-    }
-}
-
-pub struct LineChangesDecoration {
-    cached_none: DecorationText,
-    cached_added: DecorationText,
-    cached_removed_above: DecorationText,
-    cached_removed_below: DecorationText,
-    cached_modified: DecorationText,
-}
-
-impl LineChangesDecoration {
-    #[inline]
-    fn generate_cached(style: Style, text: &str) -> DecorationText {
-        DecorationText {
-            text: style.paint(text).to_string(),
-            width: text.chars().count(),
-        }
-    }
-
-    pub fn new(colors: &Colors) -> Self {
-        LineChangesDecoration {
-            cached_none: Self::generate_cached(Style::default(), " "),
-            cached_added: Self::generate_cached(colors.git_added, "+"),
-            cached_removed_above: Self::generate_cached(colors.git_removed, "‾"),
-            cached_removed_below: Self::generate_cached(colors.git_removed, "_"),
-            cached_modified: Self::generate_cached(colors.git_modified, "~"),
-        }
-    }
-}
-
-impl Decoration for LineChangesDecoration {
-    fn generate(
-        &self,
-        line_number: usize,
-        continuation: bool,
-        printer: &InteractivePrinter,
-    ) -> DecorationText {
-        if !continuation {
-            if let Some(ref changes) = printer.line_changes {
-                return match changes.get(&(line_number as u32)) {
-                    Some(&LineChange::Added) => self.cached_added.clone(),
-                    Some(&LineChange::RemovedAbove) => self.cached_removed_above.clone(),
-                    Some(&LineChange::RemovedBelow) => self.cached_removed_below.clone(),
-                    Some(&LineChange::Modified) => self.cached_modified.clone(),
-                    _ => self.cached_none.clone(),
-                };
-            }
-        }
-
-        self.cached_none.clone()
-    }
-
-    fn width(&self) -> usize {
-        self.cached_none.width
     }
 }
 

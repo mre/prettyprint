@@ -128,7 +128,7 @@ pub fn build_app(interactive_output: bool) -> ClapApp<'static, 'static> {
                 )
                 .long_help(
                     "Configure which elements (line numbers, file headers, grid \
-                     borders, Git modifications, ..) to display in addition to the \
+                     borders, ..) to display in addition to the \
                      file contents. The argument is a comma-separated list of \
                      components to display (e.g. 'numbers,changes,grid') or a \
                      pre-defined style ('full'). To set a default style, add the \

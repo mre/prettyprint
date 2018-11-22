@@ -21,8 +21,7 @@ pub fn get_args_from_config_file() -> Result<Vec<OsString>, shell_words::ParseEr
         fs::read_to_string(config_file())
             .ok()
             .map(|content| get_args_from_str(&content)),
-    )?
-    .unwrap_or(vec![]))
+    )?.unwrap_or(vec![]))
 }
 
 pub fn get_args_from_env_var() -> Option<Result<Vec<OsString>, shell_words::ParseError>> {
@@ -78,24 +77,6 @@ fn multi_line() {
     -p
     --style numbers,changes
 
-    --color=always
-    ";
-    assert_eq!(
-        vec!["-p", "--style", "numbers,changes", "--color=always"],
-        get_args_from_str(config).unwrap()
-    );
-}
-
-#[test]
-fn comments() {
-    let config = "
-    # plain style
-    -p
-
-    # show line numbers and Git modifications
-    --style numbers,changes
-
-    # Always show ANSI colors
     --color=always
     ";
     assert_eq!(

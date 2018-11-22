@@ -1,7 +1,7 @@
 use std::io::Write;
 use std::vec::Vec;
 
-use ansi_term::Colour::{Fixed, Green, Red, Yellow};
+use ansi_term::Colour::Fixed;
 use ansi_term::Style;
 
 use console::AnsiCodeIterator;
@@ -17,9 +17,7 @@ use encoding::{DecoderTrap, Encoding};
 
 use app::Config;
 use assets::HighlightingAssets;
-use decorations::{Decoration, GridBorderDecoration, LineChangesDecoration, LineNumberDecoration};
-use diff::get_git_diff;
-use diff::LineChanges;
+use decorations::{Decoration, GridBorderDecoration, LineNumberDecoration};
 use errors::*;
 use inputfile::{InputFile, InputFileReader};
 use preprocessor::{expand_tabs, replace_nonprintable};
@@ -45,7 +43,6 @@ pub struct InteractivePrinter<'a> {
     panel_width: usize,
     ansi_prefix_sgr: String,
     content_type: ContentType,
-    pub line_changes: Option<LineChanges>,
     highlighter: Option<HighlightLines<'a>>,
     syntax_set: &'a SyntaxSet,
 }
@@ -72,10 +69,6 @@ impl<'a> InteractivePrinter<'a> {
             decorations.push(Box::new(LineNumberDecoration::new(&colors)));
         }
 
-        if config.output_components.changes() {
-            decorations.push(Box::new(LineChangesDecoration::new(&colors)));
-        }
-
         let mut panel_width: usize =
             decorations.len() + decorations.iter().fold(0, |a, x| a + x.width());
 
@@ -95,21 +88,9 @@ impl<'a> InteractivePrinter<'a> {
             panel_width = 0;
         }
 
-        let mut line_changes = None;
-
         let highlighter = if reader.content_type.is_binary() {
             None
         } else {
-            // Get the Git modifications
-            line_changes = if config.output_components.changes() {
-                match file {
-                    InputFile::Ordinary(filename) => get_git_diff(&filename),
-                    _ => None,
-                }
-            } else {
-                None
-            };
-
             // Determine the type of syntax for highlighting
             let syntax = assets.get_syntax(config.language, file, reader, &config.syntax_mapping);
             Some(HighlightLines::new(syntax, theme))
@@ -122,7 +103,6 @@ impl<'a> InteractivePrinter<'a> {
             decorations,
             content_type: reader.content_type,
             ansi_prefix_sgr: String::new(),
-            line_changes,
             highlighter,
             syntax_set: &assets.syntax_set,
         }
@@ -403,9 +383,6 @@ const DEFAULT_GUTTER_COLOR: u8 = 238;
 pub struct Colors {
     pub grid: Style,
     pub filename: Style,
-    pub git_added: Style,
-    pub git_removed: Style,
-    pub git_modified: Style,
     pub line_number: Style,
 }
 
@@ -424,9 +401,6 @@ impl Colors {
         Colors {
             grid: gutter_color.normal(),
             filename: Style::new().bold(),
-            git_added: Green.normal(),
-            git_removed: Red.normal(),
-            git_modified: Yellow.normal(),
             line_number: gutter_color.normal(),
         }
     }
