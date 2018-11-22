@@ -2,6 +2,9 @@
 #![recursion_limit = "1024"]
 
 #[macro_use]
+extern crate derive_builder;
+
+#[macro_use]
 extern crate error_chain;
 
 #[macro_use]
@@ -157,19 +160,25 @@ fn run_controller(config: &Config) -> Result<()> {
     controller.run()
 }
 
-pub fn run(inputs: Vec<String>) -> Result<()> {
-    let files = inputs
-        .iter()
-        .map(|filename| {
-            if filename == "-" {
-                InputFile::StdIn
-            } else {
-                InputFile::Ordinary(filename.to_string())
-            }
-        }).collect();
-    let app = App::new()?;
-    let config = app.config(files)?;
-    run_controller(&config)
+#[derive(Default, Builder, Debug)]
+#[builder(setter(into))]
+pub struct PrettyPrint {}
+
+impl PrettyPrint {
+    pub fn run(self, inputs: Vec<String>) -> Result<()> {
+        let files = inputs
+            .iter()
+            .map(|filename| {
+                if filename == "-" {
+                    InputFile::StdIn
+                } else {
+                    InputFile::Ordinary(filename.to_string())
+                }
+            }).collect();
+        let app = App::new()?;
+        let config = app.config(files)?;
+        run_controller(&config)
+    }
 }
 
 #[cfg(test)]
@@ -179,7 +188,7 @@ mod tests {
     /// Pretty prints its own code
     #[test]
     fn it_works() {
-        run(vec!["src/lib.rs".to_string()]).unwrap();
+        let printer = PrettyPrint::default();
+        printer.run(vec!["src/lib.rs".to_string()]).unwrap();
     }
-
 }
