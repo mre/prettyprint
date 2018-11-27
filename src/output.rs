@@ -15,7 +15,7 @@ pub enum OutputType {
 }
 
 impl OutputType {
-    pub fn from_mode(mode: PagingMode, pager: Option<&str>) -> Result<Self> {
+    pub fn from_mode(mode: PagingMode, pager: Option<String>) -> Result<Self> {
         use self::PagingMode::*;
         Ok(match mode {
             Always => OutputType::try_pager(false, pager)?,
@@ -25,7 +25,7 @@ impl OutputType {
     }
 
     /// Try to launch the pager. Fall back to stdout in case of errors.
-    fn try_pager(quit_if_one_screen: bool, pager_from_config: Option<&str>) -> Result<Self> {
+    fn try_pager(quit_if_one_screen: bool, pager_from_config: Option<String>) -> Result<Self> {
         let pager_from_env = env::var("PRETTYPRINT_PAGER").or_else(|_| env::var("PAGER"));
 
         let pager = pager_from_config

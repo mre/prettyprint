@@ -27,7 +27,6 @@ mod assets;
 mod builder;
 mod clap_app;
 mod config;
-mod controller;
 mod decorations;
 mod dirs;
 mod inputfile;

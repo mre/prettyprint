@@ -1,9 +1,18 @@
 use errors::*;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct LineRange {
     pub lower: usize,
     pub upper: usize,
+}
+
+impl Default for LineRange {
+    fn default() -> Self {
+        LineRange {
+            lower: usize::min_value(),
+            upper: usize::max_value(),
+        }
+    }
 }
 
 impl LineRange {
@@ -12,10 +21,7 @@ impl LineRange {
     }
 
     pub fn new() -> LineRange {
-        LineRange {
-            lower: usize::min_value(),
-            upper: usize::max_value(),
-        }
+        LineRange::default()
     }
 
     pub fn parse_range(range_raw: &str) -> Result<LineRange> {
@@ -89,10 +95,19 @@ pub enum RangeCheckResult {
     AfterLastRange,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct LineRanges {
     ranges: Vec<LineRange>,
     largest_upper_bound: usize,
+}
+
+impl Default for LineRanges {
+    fn default() -> Self {
+        LineRanges {
+            ranges: vec![LineRange::default()],
+            largest_upper_bound: usize::max_value(),
+        }
+    }
 }
 
 impl LineRanges {

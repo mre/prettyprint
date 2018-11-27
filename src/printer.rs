@@ -3,6 +3,8 @@ use std::vec::Vec;
 
 use ansi_term::Colour::Fixed;
 use ansi_term::Style;
+use style::OutputComponents;
+use syntax_mapping::SyntaxMapping;
 
 use console::AnsiCodeIterator;
 
@@ -16,7 +18,6 @@ use encoding::all::{UTF_16BE, UTF_16LE};
 use encoding::{DecoderTrap, Encoding};
 
 use assets::HighlightingAssets;
-use builder::Config;
 use decorations::{Decoration, GridBorderDecoration, LineNumberDecoration};
 use errors::*;
 use inputfile::{InputFile, InputFileReader};
@@ -38,26 +39,43 @@ pub trait Printer {
 
 pub struct InteractivePrinter<'a> {
     colors: Colors,
-    config: &'a Config<'a>,
     decorations: Vec<Box<dyn Decoration>>,
     panel_width: usize,
     ansi_prefix_sgr: String,
     content_type: ContentType,
     highlighter: Option<HighlightLines<'a>>,
     syntax_set: &'a SyntaxSet,
+    output_components: OutputComponents,
+    colored_output: bool,
+    true_color: bool,
+    term_width: usize,
+    tab_width: usize,
+    show_nonprintable: bool,
+    output_wrap: OutputWrap,
+    use_italic_text: bool,
 }
 
 impl<'a> InteractivePrinter<'a> {
     pub fn new(
-        config: &'a Config,
         assets: &'a HighlightingAssets,
         file: &InputFile,
         reader: &mut InputFileReader,
+        output_components: OutputComponents,
+        theme: String,
+        colored_output: bool,
+        true_color: bool,
+        term_width: usize,
+        language: Option<String>,
+        syntax_mapping: SyntaxMapping,
+        tab_width: usize,
+        show_nonprintable: bool,
+        output_wrap: OutputWrap,
+        use_italic_text: bool,
     ) -> Self {
-        let theme = assets.get_theme(&config.theme);
+        let theme = assets.get_theme(&theme);
 
-        let colors = if config.colored_output {
-            Colors::colored(theme, config.true_color)
+        let colors = if colored_output {
+            Colors::colored(theme, true_color)
         } else {
             Colors::plain()
         };
@@ -65,7 +83,7 @@ impl<'a> InteractivePrinter<'a> {
         // Create decorations.
         let mut decorations: Vec<Box<dyn Decoration>> = Vec::new();
 
-        if config.output_components.numbers() {
+        if output_components.numbers() {
             decorations.push(Box::new(LineNumberDecoration::new(&colors)));
         }
 
@@ -75,15 +93,13 @@ impl<'a> InteractivePrinter<'a> {
         // The grid border decoration isn't added until after the panel_width calculation, since the
         // print_horizontal_line, print_header, and print_footer functions all assume the panel
         // width is without the grid border.
-        if config.output_components.grid() && !decorations.is_empty() {
+        if output_components.grid() && !decorations.is_empty() {
             decorations.push(Box::new(GridBorderDecoration::new(&colors)));
         }
 
         // Disable the panel if the terminal is too small (i.e. can't fit 5 characters with the
         // panel showing).
-        if config.term_width
-            < (decorations.len() + decorations.iter().fold(0, |a, x| a + x.width())) + 5
-        {
+        if term_width < (decorations.len() + decorations.iter().fold(0, |a, x| a + x.width())) + 5 {
             decorations.clear();
             panel_width = 0;
         }
@@ -92,19 +108,26 @@ impl<'a> InteractivePrinter<'a> {
             None
         } else {
             // Determine the type of syntax for highlighting
-            let syntax = assets.get_syntax(config.language, file, reader, &config.syntax_mapping);
+            let syntax = assets.get_syntax(language, file, reader, &syntax_mapping);
             Some(HighlightLines::new(syntax, theme))
         };
 
         InteractivePrinter {
             panel_width,
             colors,
-            config,
             decorations,
             content_type: reader.content_type,
             ansi_prefix_sgr: String::new(),
             highlighter,
             syntax_set: &assets.syntax_set,
+            output_components,
+            colored_output,
+            true_color,
+            term_width,
+            tab_width,
+            show_nonprintable,
+            output_wrap,
+            use_italic_text,
         }
     }
 
@@ -113,10 +136,10 @@ impl<'a> InteractivePrinter<'a> {
             writeln!(
                 handle,
                 "{}",
-                self.colors.grid.paint("─".repeat(self.config.term_width))
+                self.colors.grid.paint("─".repeat(self.term_width))
             )?;
         } else {
-            let hline = "─".repeat(self.config.term_width - (self.panel_width + 1));
+            let hline = "─".repeat(self.term_width - (self.panel_width + 1));
             let hline = format!("{}{}{}", "─".repeat(self.panel_width), grid_char, hline);
             writeln!(handle, "{}", self.colors.grid.paint(hline))?;
         }
@@ -125,8 +148,8 @@ impl<'a> InteractivePrinter<'a> {
     }
 
     fn preprocess(&self, text: &str, cursor: &mut usize) -> String {
-        if self.config.tab_width > 0 {
-            expand_tabs(text, self.config.tab_width, cursor)
+        if self.tab_width > 0 {
+            expand_tabs(text, self.tab_width, cursor)
         } else {
             text.to_string()
         }
@@ -135,11 +158,11 @@ impl<'a> InteractivePrinter<'a> {
 
 impl<'a> Printer for InteractivePrinter<'a> {
     fn print_header(&mut self, handle: &mut Write, file: &InputFile) -> Result<()> {
-        if !self.config.output_components.header() {
+        if !self.output_components.header() {
             return Ok(());
         }
 
-        if self.config.output_components.grid() {
+        if self.output_components.grid() {
             self.print_horizontal_line(handle, '┬')?;
 
             write!(
@@ -175,7 +198,7 @@ impl<'a> Printer for InteractivePrinter<'a> {
             mode
         )?;
 
-        if self.config.output_components.grid() {
+        if self.output_components.grid() {
             if self.content_type.is_text() {
                 self.print_horizontal_line(handle, '┼')?;
             } else {
@@ -187,7 +210,7 @@ impl<'a> Printer for InteractivePrinter<'a> {
     }
 
     fn print_footer(&mut self, handle: &mut Write) -> Result<()> {
-        if self.config.output_components.grid() && self.content_type.is_text() {
+        if self.output_components.grid() && self.content_type.is_text() {
             self.print_horizontal_line(handle, '┴')
         } else {
             Ok(())
@@ -214,8 +237,8 @@ impl<'a> Printer for InteractivePrinter<'a> {
             _ => String::from_utf8_lossy(&line_buffer).to_string(),
         };
 
-        if self.config.show_nonprintable {
-            line = replace_nonprintable(&mut line, self.config.tab_width);
+        if self.show_nonprintable {
+            line = replace_nonprintable(&mut line, self.tab_width);
         }
 
         let regions = {
@@ -233,7 +256,7 @@ impl<'a> Printer for InteractivePrinter<'a> {
         }
 
         let mut cursor: usize = 0;
-        let mut cursor_max: usize = self.config.term_width;
+        let mut cursor_max: usize = self.term_width;
         let mut cursor_total: usize = 0;
         let mut panel_wrap: Option<String> = None;
 
@@ -252,10 +275,10 @@ impl<'a> Printer for InteractivePrinter<'a> {
         }
 
         // Line contents.
-        if self.config.output_wrap == OutputWrap::None {
-            let true_color = self.config.true_color;
-            let colored_output = self.config.colored_output;
-            let italics = self.config.use_italic_text;
+        if self.output_wrap == OutputWrap::None {
+            let true_color = self.true_color;
+            let colored_output = self.colored_output;
+            let italics = self.use_italic_text;
 
             for &(style, region) in regions.iter() {
                 let text = &*self.preprocess(region, &mut cursor_total);
@@ -316,9 +339,9 @@ impl<'a> Printer for InteractivePrinter<'a> {
                                                 "{}{}{}",
                                                 self.ansi_prefix_sgr, ansi_prefix, text
                                             ),
-                                            self.config.true_color,
-                                            self.config.colored_output,
-                                            self.config.use_italic_text
+                                            self.true_color,
+                                            self.colored_output,
+                                            self.use_italic_text
                                         )
                                     )?;
                                     break;
@@ -355,9 +378,9 @@ impl<'a> Printer for InteractivePrinter<'a> {
                                             "{}{}{}",
                                             self.ansi_prefix_sgr, ansi_prefix, text
                                         ),
-                                        self.config.true_color,
-                                        self.config.colored_output,
-                                        self.config.use_italic_text
+                                        self.true_color,
+                                        self.colored_output,
+                                        self.use_italic_text
                                     ),
                                     panel_wrap.clone().unwrap()
                                 )?;

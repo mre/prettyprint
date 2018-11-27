@@ -4,6 +4,12 @@ use std::collections::HashMap;
 #[derive(Debug, Clone)]
 pub struct SyntaxMapping(HashMap<String, String>);
 
+impl Default for SyntaxMapping {
+    fn default() -> Self {
+        SyntaxMapping(HashMap::new())
+    }
+}
+
 impl SyntaxMapping {
     pub fn new() -> SyntaxMapping {
         SyntaxMapping(HashMap::new())
