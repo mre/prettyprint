@@ -39,7 +39,9 @@ mod syntax_mapping;
 mod terminal;
 mod util;
 
-pub use builder::PrettyPrintBuilder;
+pub use builder::PrettyPrinter;
+// pub use style::OutputComponent;
+
 mod errors {
     error_chain! {
         foreign_links {
@@ -58,10 +60,17 @@ mod tests {
     /// Pretty prints its own code
     #[test]
     fn it_works() {
-        let printer = PrettyPrintBuilder::default()
-            .colored_output(true)
-            .build()
-            .unwrap();
+        let printer = PrettyPrinter::default().build().unwrap();
         printer.run(vec!["src/lib.rs".to_string()]).unwrap();
     }
+
+    // Pretty prints its own code with some more formatting shenanigans
+    // #[test]
+    // fn it_works_with_output_opts() {
+    //     let printer = PrettyPrintBuilder::default().with_line_numbers().with_header().with_grid()
+    //         .output_components([PrettyPrint::OutputComponent::Numbers])
+    //         .build()
+    //         .unwrap();
+    //     printer.run(vec!["src/lib.rs".to_string()]).unwrap();
+    // }
 }

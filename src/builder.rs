@@ -35,7 +35,7 @@ impl Default for PagingMode {
 }
 
 #[derive(Default, Builder, Debug)]
-#[builder(setter(into))]
+#[builder(name = "PrettyPrinter", setter(into))]
 pub struct PrettyPrint {
     /// The explicitly configured language, if any
     #[builder(default = "None")]
