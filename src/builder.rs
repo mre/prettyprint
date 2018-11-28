@@ -1,7 +1,8 @@
 use std::env;
 use std::io::Write;
 
-use assets::HighlightingAssets;
+use assets::{HighlightingAssets, PRETTYPRINT_THEME_DEFAULT};
+use console::Term;
 use errors::*;
 use inputfile::{InputFile, InputFileReader};
 use line_range::RangeCheckResult;
@@ -17,7 +18,7 @@ use ansi_term;
 // use errors::*;
 // use line_range::{LineRange, LineRanges};
 use line_range::LineRanges;
-use style::{OutputComponents, OutputWrap};
+use style::{OutputComponent, OutputComponents, OutputWrap};
 use syntax_mapping::SyntaxMapping;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -36,54 +37,66 @@ impl Default for PagingMode {
 #[derive(Default, Builder, Debug)]
 #[builder(setter(into))]
 pub struct PrettyPrint {
-    /// List of files to print
-    pub files: Vec<InputFile>,
-
     /// The explicitly configured language, if any
-    pub language: Option<String>,
+    #[builder(default = "None")]
+    language: Option<String>,
 
     /// Whether or not to show/replace non-printable characters like space, tab and newline.
-    pub show_nonprintable: bool,
+    #[builder(default = "false")]
+    show_nonprintable: bool,
 
     /// The character width of the terminal
-    pub term_width: usize,
+    #[builder(default = "Term::stdout().size().1 as usize")]
+    term_width: usize,
 
     /// The width of tab characters.
     /// Currently, a value of 0 will cause tabs to be passed through without expanding them.
-    pub tab_width: usize,
+    #[builder(default = "0")]
+    tab_width: usize,
 
     /// Whether or not to simply loop through all input (`cat` mode)
-    pub loop_through: bool,
+    #[builder(default = "false")]
+    loop_through: bool,
 
     /// Whether or not the output should be colorized
-    pub colored_output: bool,
+    #[builder(default = "true")]
+    colored_output: bool,
 
     /// Whether or not the output terminal supports true color
-    pub true_color: bool,
+    #[builder(default = "is_truecolor_terminal()")]
+    true_color: bool,
 
     /// Style elements (grid, line numbers, ...)
-    pub output_components: OutputComponents,
+    #[builder(default)]
+    output_components: OutputComponents,
 
     /// Text wrapping mode
-    pub output_wrap: OutputWrap,
+    #[builder(default = "OutputWrap::None")]
+    output_wrap: OutputWrap,
 
     /// Pager or STDOUT
-    pub paging_mode: PagingMode,
+    #[builder(default = "PagingMode::QuitIfOneScreen")]
+    paging_mode: PagingMode,
 
     /// Specifies the lines that should be printed
-    pub line_ranges: LineRanges,
+    #[builder(default)]
+    line_ranges: LineRanges,
 
     /// The syntax highlighting theme
-    pub theme: String,
+    #[builder(default = "String::from(PRETTYPRINT_THEME_DEFAULT)")]
+    theme: String,
 
     /// File extension/name mappings
-    pub syntax_mapping: SyntaxMapping,
+    #[builder(default)]
+    syntax_mapping: SyntaxMapping,
 
     /// Command to start the pager
-    pub pager: Option<String>,
+    #[builder(default = "None")]
+    pager: Option<String>,
 
     /// Whether to print some characters using italics
-    pub use_italic_text: bool,
+    #[builder(default = "false")]
+    use_italic_text: bool,
 }
 
 impl PrettyPrint {
@@ -318,6 +331,4 @@ fn is_truecolor_terminal() -> bool {
     env::var("COLORTERM")
         .map(|colorterm| colorterm == "truecolor" || colorterm == "24bit")
         .unwrap_or(false)
-}
-}
 }

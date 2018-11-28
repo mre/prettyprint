@@ -39,7 +39,7 @@ mod syntax_mapping;
 mod terminal;
 mod util;
 
-pub use builder::PrettyPrint;
+pub use builder::PrettyPrintBuilder;
 mod errors {
     error_chain! {
         foreign_links {
@@ -58,7 +58,10 @@ mod tests {
     /// Pretty prints its own code
     #[test]
     fn it_works() {
-        let printer = PrettyPrint::default();
+        let printer = PrettyPrintBuilder::default()
+            .colored_output(true)
+            .build()
+            .unwrap();
         printer.run(vec!["src/lib.rs".to_string()]).unwrap();
     }
 }

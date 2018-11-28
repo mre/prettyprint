@@ -68,8 +68,16 @@ impl FromStr for OutputComponent {
     }
 }
 
-#[derive(Default, Debug, Clone)]
+#[derive(Debug, Clone)]
 pub struct OutputComponents(pub HashSet<OutputComponent>);
+
+impl Default for OutputComponents {
+    fn default() -> Self {
+        let mut set = HashSet::new();
+        set.insert(OutputComponent::Auto);
+        OutputComponents(set)
+    }
+}
 
 impl OutputComponents {
     pub fn grid(&self) -> bool {
