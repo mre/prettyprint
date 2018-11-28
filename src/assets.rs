@@ -117,6 +117,9 @@ impl HighlightingAssets {
             (None, InputFile::StdIn) => String::from_utf8(reader.first_line.clone())
                 .ok()
                 .and_then(|l| self.syntax_set.find_syntax_by_first_line(&l)),
+            (None, InputFile::String(_)) => String::from_utf8(reader.first_line.clone())
+                .ok()
+                .and_then(|l| self.syntax_set.find_syntax_by_first_line(&l)),
         };
 
         syntax.unwrap_or_else(|| self.syntax_set.find_syntax_plain_text())

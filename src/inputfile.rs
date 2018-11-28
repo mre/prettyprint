@@ -49,6 +49,7 @@ impl<'a> InputFileReader<'a> {
 pub enum InputFile {
     StdIn,
     Ordinary(String),
+    String(String),
 }
 
 impl InputFile {
@@ -63,6 +64,7 @@ impl InputFile {
 
                 Ok(InputFileReader::new(BufReader::new(file)))
             }
+            InputFile::String(s) => Ok(InputFileReader::new(s.as_bytes())),
             _ => unimplemented!(), // Used to be InputFile::Stdin
         }
     }

@@ -39,7 +39,7 @@ mod syntax_mapping;
 mod terminal;
 mod util;
 
-pub use builder::PrettyPrinter;
+pub use builder::{PagingMode, PrettyPrinter};
 // pub use style::OutputComponent;
 
 mod errors {
@@ -57,20 +57,30 @@ mod errors {
 mod tests {
     use super::*;
 
-    /// Pretty prints its own code
-    #[test]
-    fn it_works() {
-        let printer = PrettyPrinter::default().build().unwrap();
-        printer.run(vec!["src/lib.rs".to_string()]).unwrap();
-    }
-
-    // Pretty prints its own code with some more formatting shenanigans
+    // /// Pretty prints its own code
     // #[test]
-    // fn it_works_with_output_opts() {
-    //     let printer = PrettyPrintBuilder::default().with_line_numbers().with_header().with_grid()
-    //         .output_components([PrettyPrint::OutputComponent::Numbers])
-    //         .build()
-    //         .unwrap();
-    //     printer.run(vec!["src/lib.rs".to_string()]).unwrap();
+    // fn it_works() {
+    //     let printer = PrettyPrinter::default().build().unwrap();
+    //     printer.file("src/lib.rs").unwrap();
     // }
+
+    /// Pretty prints its own code with some more formatting shenanigans
+    #[test]
+    fn it_works_with_output_opts() {
+        let printer = PrettyPrinter::default()
+            .line_numbers(false)
+            .header(true)
+            .grid(false)
+            .paging_mode(PagingMode::Never)
+            .build()
+            .unwrap();
+
+        let example = r#"
+        def fib(n)        
+            return 1 if n <= 1
+            fib(n-1) + fib(n-2)
+        end
+        "#;
+        printer.string(example).unwrap();
+    }
 }

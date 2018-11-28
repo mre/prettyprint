@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::env;
 use std::io::Write;
 
@@ -66,9 +67,17 @@ pub struct PrettyPrint {
     #[builder(default = "is_truecolor_terminal()")]
     true_color: bool,
 
-    /// Style elements (grid, line numbers, ...)
-    #[builder(default)]
-    output_components: OutputComponents,
+    /// Print grid
+    #[builder(default = "true")]
+    grid: bool,
+
+    /// Print header with output file name
+    #[builder(default = "true")]
+    header: bool,
+
+    /// Print line numbers
+    #[builder(default = "true")]
+    line_numbers: bool,
 
     /// Text wrapping mode
     #[builder(default = "OutputWrap::None")]
@@ -100,53 +109,66 @@ pub struct PrettyPrint {
 }
 
 impl PrettyPrint {
-    pub fn run(self, inputs: Vec<String>) -> Result<()> {
-        let files = inputs
-            .iter()
-            .map(|filename| {
-                if filename == "-" {
-                    InputFile::StdIn
-                } else {
-                    InputFile::Ordinary(filename.to_string())
-                }
-            }).collect();
+    pub fn file<T: Into<String>>(self, filename: T) -> Result<()> {
+        let file_string = filename.into();
+        let input = if file_string == "-" {
+            InputFile::StdIn
+        } else {
+            InputFile::Ordinary(file_string)
+        };
 
+        self.run_controller(input)
+    }
+
+    pub fn string<T: Into<String>>(self, input: T) -> Result<()> {
+        self.run_controller(InputFile::String(input.into()))
+    }
+
+    pub fn run_controller(&self, input_file: InputFile) -> Result<()> {
         #[cfg(windows)]
         let _ = ansi_term::enable_ansi_support();
         // let interactive_output = atty::is(Stream::Stdout);
 
-        // let config = self.config(files)?;
-        self.run_controller(files)
-    }
+        let assets = HighlightingAssets::new();
+        let mut reader = input_file.get_reader()?;
 
-    pub fn run_controller(&self, input_files: Vec<InputFile>) -> Result<()> {
+        // This is faaaar from ideal, I know.
+        let mut printer = InteractivePrinter::new(
+            &assets,
+            &input_file,
+            &mut reader,
+            self.get_output_components(),
+            self.theme.clone(),
+            self.colored_output,
+            self.true_color,
+            self.term_width,
+            self.language.clone(),
+            self.syntax_mapping.clone(),
+            self.tab_width,
+            self.show_nonprintable,
+            self.output_wrap,
+            self.use_italic_text,
+        );
+
         let mut output_type = OutputType::from_mode(self.paging_mode, self.pager.clone())?;
         let writer = output_type.handle()?;
 
-        let assets = HighlightingAssets::new();
-        for input_file in &input_files {
-            let mut reader = input_file.get_reader()?;
-
-            // This is faaaar from ideal, I know.
-            let mut printer = InteractivePrinter::new(
-                &assets,
-                input_file,
-                &mut reader,
-                self.output_components.clone(),
-                self.theme.clone(),
-                self.colored_output,
-                self.true_color,
-                self.term_width,
-                self.language.clone(),
-                self.syntax_mapping.clone(),
-                self.tab_width,
-                self.show_nonprintable,
-                self.output_wrap,
-                self.use_italic_text,
-            );
-            self.print_file(reader, &mut printer, writer, input_file)?;
-        }
+        self.print_file(reader, &mut printer, writer, &input_file)?;
         Ok(())
+    }
+
+    fn get_output_components(&self) -> OutputComponents {
+        let mut components = HashSet::new();
+        if self.grid {
+            components.insert(OutputComponent::Grid);
+        }
+        if self.header {
+            components.insert(OutputComponent::Header);
+        }
+        if self.line_numbers {
+            components.insert(OutputComponent::Numbers);
+        }
+        OutputComponents(components)
     }
 
     fn print_file<'a, P: Printer>(
@@ -193,138 +215,6 @@ impl PrettyPrint {
         }
         Ok(())
     }
-    // pub fn config(&self, files: Vec<InputFile>) -> Result<Config> {
-    // let output_components = self.output_components()?;
-
-    // let paging_mode = match self.matches.value_of("paging") {
-    //     Some("always") => PagingMode::Always,
-    //     Some("never") => PagingMode::Never,
-    //     Some("auto") | _ => {
-    //         if files.contains(&InputFile::StdIn) {
-    //             // If we are reading from stdin, only enable paging if we write to an
-    //             // interactive terminal and if we do not *read* from an interactive
-    //             // terminal.
-    //             if self.interactive_output && !atty::is(Stream::Stdin) {
-    //                 PagingMode::QuitIfOneScreen
-    //             } else {
-    //                 PagingMode::Never
-    //             }
-    //         } else {
-    //             if self.interactive_output {
-    //                 PagingMode::QuitIfOneScreen
-    //             } else {
-    //                 PagingMode::Never
-    //             }
-    //         }
-    //     }
-    // };
-
-    // let mut syntax_mapping = SyntaxMapping::new();
-
-    // if let Some(values) = self.matches.values_of("map-syntax") {
-    //     for from_to in values {
-    //         let parts: Vec<_> = from_to.split(":").collect();
-
-    //         if parts.len() != 2 {
-    //             return Err("Invalid syntax mapping. The format of the -m/--map-syntax option is 'from:to'.".into());
-    //         }
-
-    //         syntax_mapping.insert(parts[0].into(), parts[1].into());
-    //     }
-    // }
-
-    // Ok(Config {
-    //     true_color: is_truecolor_terminal(),
-    //     language: self.matches.value_of("language").or_else(|| {
-    //         if self.matches.is_present("show-all") {
-    //             Some("show-nonprintable")
-    //         } else {
-    //             None
-    //         }
-    //     }),
-    //     show_nonprintable: self.matches.is_present("show-all"),
-    //     output_wrap: if !self.interactive_output {
-    //         // We don't have the tty width when piping to another program.
-    //         // There's no point in wrapping when this is the case.
-    //         OutputWrap::None
-    //     } else {
-    //         match self.matches.value_of("wrap") {
-    //             Some("character") => OutputWrap::Character,
-    //             Some("never") => OutputWrap::None,
-    //             Some("auto") | _ => {
-    //                 if output_components.plain() {
-    //                     OutputWrap::None
-    //                 } else {
-    //                     OutputWrap::Character
-    //                 }
-    //             }
-    //         }
-    //     },
-    //     colored_output: match self.matches.value_of("color") {
-    //         Some("always") => true,
-    //         Some("never") => false,
-    //         Some("auto") | _ => self.interactive_output,
-    //     },
-    //     paging_mode,
-    //     term_width: self
-    //         .matches
-    //         .value_of("terminal-width")
-    //         .and_then(|w| {
-    //             if w.starts_with("+") || w.starts_with("-") {
-    //                 // Treat argument as a delta to the current terminal width
-    //                 w.parse().ok().map(|delta: i16| {
-    //                     let old_width: u16 = Term::stdout().size().1;
-    //                     let new_width: i32 = old_width as i32 + delta as i32;
-
-    //                     if new_width <= 0 {
-    //                         old_width as usize
-    //                     } else {
-    //                         new_width as usize
-    //                     }
-    //                 })
-    //             } else {
-    //                 w.parse().ok()
-    //             }
-    //         }).unwrap_or(Term::stdout().size().1 as usize),
-    //     loop_through: !(self.interactive_output
-    //         || self.matches.value_of("color") == Some("always")
-    //         || self.matches.value_of("decorations") == Some("always")),
-    //     files,
-    //     tab_width: self
-    //         .matches
-    //         .value_of("tabs")
-    //         .map(String::from)
-    //         .or_else(|| env::var("PRETTYPRINT_TABS").ok())
-    //         .and_then(|t| t.parse().ok())
-    //         .unwrap_or(
-    //             if output_components.plain() && paging_mode == PagingMode::Never {
-    //                 0
-    //             } else {
-    //                 4
-    //             },
-    //         ),
-    //     theme: self
-    //         .matches
-    //         .value_of("theme")
-    //         .map(String::from)
-    //         .or_else(|| env::var("PRETTYPRINT_THEME").ok())
-    //         .unwrap_or(String::from(PRETTYPRINT_THEME_DEFAULT)),
-    //     line_ranges: LineRanges::from(
-    //         transpose(
-    //             self.matches
-    //                 .values_of("line-range")
-    //                 .map(|vs| vs.map(LineRange::from).collect()),
-    //         )?.unwrap_or(vec![]),
-    //     ),
-    //     output_components,
-    //     syntax_mapping,
-    //     pager: self.matches.value_of("pager"),
-    //     use_italic_text: match self.matches.value_of("italic-text") {
-    //         Some("always") => true,
-    //         _ => false,
-    //     },
-    // })
-    // }
 }
 
 fn is_truecolor_terminal() -> bool {

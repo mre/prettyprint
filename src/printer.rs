@@ -177,8 +177,9 @@ impl<'a> Printer for InteractivePrinter<'a> {
             write!(handle, "{}", " ".repeat(self.panel_width))?;
         }
 
-        let (prefix, name) = match file {
-            InputFile::Ordinary(filename) => ("File: ", filename),
+        let (prefix, name): (&str, String) = match file {
+            InputFile::Ordinary(filename) => ("File: ", filename.to_string()),
+            InputFile::String(_) => ("", "".to_string()),
             // _ => ("", &"STDIN".to_string()),
             _ => unimplemented!(),
         };
