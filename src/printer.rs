@@ -26,7 +26,12 @@ use style::OutputWrap;
 use terminal::{as_terminal_escaped, to_ansi_color};
 
 pub trait Printer {
-    fn print_header(&mut self, handle: &mut Write, file: &InputFile) -> Result<()>;
+    fn print_header(
+        &mut self,
+        handle: &mut Write,
+        file: &InputFile,
+        header_overwrite: Option<String>,
+    ) -> Result<()>;
     fn print_footer(&mut self, handle: &mut Write) -> Result<()>;
     fn print_line(
         &mut self,
@@ -157,7 +162,12 @@ impl<'a> InteractivePrinter<'a> {
 }
 
 impl<'a> Printer for InteractivePrinter<'a> {
-    fn print_header(&mut self, handle: &mut Write, file: &InputFile) -> Result<()> {
+    fn print_header(
+        &mut self,
+        handle: &mut Write,
+        file: &InputFile,
+        header_overwrite: Option<String>,
+    ) -> Result<()> {
         if !self.output_components.header() {
             return Ok(());
         }
@@ -175,13 +185,16 @@ impl<'a> Printer for InteractivePrinter<'a> {
             )?;
         } else {
             write!(handle, "{}", " ".repeat(self.panel_width))?;
-        }
+        };
 
-        let (prefix, name): (&str, String) = match file {
-            InputFile::Ordinary(filename) => ("File: ", filename.to_string()),
-            InputFile::String(_) => ("", "".to_string()),
-            // _ => ("", &"STDIN".to_string()),
-            _ => unimplemented!(),
+        let (prefix, name): (&str, String) = match header_overwrite {
+            Some(overwrite) => ("", overwrite),
+            None => match file {
+                InputFile::Ordinary(filename) => ("File: ", filename.to_string()),
+                InputFile::String(_) => ("", "".to_string()),
+                // _ => ("", &"STDIN".to_string()),
+                _ => unimplemented!(),
+            },
         };
 
         let mode = match self.content_type {

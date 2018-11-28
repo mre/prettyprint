@@ -68,9 +68,9 @@ mod tests {
     #[test]
     fn it_works_with_output_opts() {
         let printer = PrettyPrinter::default()
-            .line_numbers(false)
+            .line_numbers(true)
             .header(true)
-            .grid(false)
+            .grid(true)
             .paging_mode(PagingMode::Never)
             .build()
             .unwrap();
@@ -81,6 +81,6 @@ mod tests {
             fib(n-1) + fib(n-2)
         end
         "#;
-        printer.string(example).unwrap();
+        printer.string_with_header(example, "example.rb").unwrap();
     }
 }

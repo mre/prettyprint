@@ -117,14 +117,22 @@ impl PrettyPrint {
             InputFile::Ordinary(file_string)
         };
 
-        self.run_controller(input)
+        self.run_controller(input, None)
     }
 
     pub fn string<T: Into<String>>(self, input: T) -> Result<()> {
-        self.run_controller(InputFile::String(input.into()))
+        self.run_controller(InputFile::String(input.into()), None)
     }
 
-    pub fn run_controller(&self, input_file: InputFile) -> Result<()> {
+    pub fn string_with_header<T: Into<String>>(self, input: T, header: T) -> Result<()> {
+        self.run_controller(InputFile::String(input.into()), Some(header.into()))
+    }
+
+    pub fn run_controller(
+        &self,
+        input_file: InputFile,
+        header_overwrite: Option<String>,
+    ) -> Result<()> {
         #[cfg(windows)]
         let _ = ansi_term::enable_ansi_support();
         // let interactive_output = atty::is(Stream::Stdout);
@@ -153,7 +161,7 @@ impl PrettyPrint {
         let mut output_type = OutputType::from_mode(self.paging_mode, self.pager.clone())?;
         let writer = output_type.handle()?;
 
-        self.print_file(reader, &mut printer, writer, &input_file)?;
+        self.print_file(reader, &mut printer, writer, &input_file, header_overwrite)?;
         Ok(())
     }
 
@@ -177,8 +185,9 @@ impl PrettyPrint {
         printer: &mut P,
         writer: &mut Write,
         input_file: &InputFile,
+        header_overwrite: Option<String>,
     ) -> Result<()> {
-        printer.print_header(writer, &input_file)?;
+        printer.print_header(writer, &input_file, header_overwrite)?;
         self.print_file_ranges(printer, writer, reader, &self.line_ranges)?;
         printer.print_footer(writer)?;
 
