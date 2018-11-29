@@ -25,8 +25,6 @@ extern crate wild;
 
 mod assets;
 mod builder;
-mod clap_app;
-mod config;
 mod decorations;
 mod dirs;
 mod inputfile;
@@ -37,7 +35,6 @@ mod printer;
 mod style;
 mod syntax_mapping;
 mod terminal;
-mod util;
 
 pub use builder::{PagingMode, PrettyPrinter};
 // pub use style::OutputComponent;

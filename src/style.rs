@@ -26,31 +26,6 @@ impl Default for OutputWrap {
     }
 }
 
-impl OutputComponent {
-    pub fn components(&self, interactive_terminal: bool) -> &'static [OutputComponent] {
-        match *self {
-            OutputComponent::Auto => {
-                if interactive_terminal {
-                    OutputComponent::Full.components(interactive_terminal)
-                } else {
-                    OutputComponent::Plain.components(interactive_terminal)
-                }
-            }
-            OutputComponent::Changes => &[OutputComponent::Changes],
-            OutputComponent::Grid => &[OutputComponent::Grid],
-            OutputComponent::Header => &[OutputComponent::Header],
-            OutputComponent::Numbers => &[OutputComponent::Numbers],
-            OutputComponent::Full => &[
-                OutputComponent::Changes,
-                OutputComponent::Grid,
-                OutputComponent::Header,
-                OutputComponent::Numbers,
-            ],
-            OutputComponent::Plain => &[],
-        }
-    }
-}
-
 impl FromStr for OutputComponent {
     type Err = Error;
 
@@ -90,9 +65,5 @@ impl OutputComponents {
 
     pub fn numbers(&self) -> bool {
         self.0.contains(&OutputComponent::Numbers)
-    }
-
-    pub fn plain(&self) -> bool {
-        self.0.iter().all(|c| c == &OutputComponent::Plain)
     }
 }

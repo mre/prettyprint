@@ -10,8 +10,6 @@ use line_range::RangeCheckResult;
 use output::OutputType;
 use printer::{InteractivePrinter, Printer};
 
-use atty::{self, Stream};
-
 #[cfg(windows)]
 use ansi_term;
 
