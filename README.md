@@ -1,10 +1,10 @@
 # prettyprint - syntax highlighting with batteries included
 
-...a surprisingly creative name for a humble syntax highlighting package.
+...a surprisingly creative name for a basic syntax highlighting package.
 
 ## Quick start
 
-
+![Screenshot](./assets/screenshot.jpg)
 
 The above output was created with the following code:
 
@@ -34,21 +34,30 @@ end
 printer.string_with_header(example, "fib.rb")?;
 ```
 
-## Why?
+"What!? It can also print strings, Matthias? That's insane."  
+It's true. You're welcome.
+
+## But why?
 
 [`syntect`](https://github.com/trishume/syntect/) is a great package for highlighting text.  
-When writing a command-line tool that prints text however, you might be looking for some more functionality. This includes the following:
+When writing a command-line tool that prints text however, you might be looking for some additional functionality.
 
 * Line numbers
 * More built-in color-themes
 * Automatic pagination
-* Printing the filename at the top
 * Proper terminal handling
 * Showing non-printable characters
+* File headers
 * Windows support
 
 `prettyprint` offers all of this in one crate.  
 
+## Known limitations
+
+* Doesn't run on `no-std` targets. I don't plan to support those.
+
 ## Credits
 
-`prettyprint` is simply a fork of [`bat`](https://github.com/sharkdp/bat/), with some functionality stripped out and bundled up as a library. All credits go to the original authors.
+`prettyprint` is simply a fork of [`bat`](https://github.com/sharkdp/bat/), with some functionality stripped out and bundled up as a library. 
+I built it, because [I needed it](https://github.com/sharkdp/bat/issues/423) for [cargo-inspect](https://github.com/mre/cargo-inspect/).
+All credits go to the original authors.
