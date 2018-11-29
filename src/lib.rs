@@ -49,6 +49,8 @@ mod errors {
     }
 }
 
+pub use errors::Error as PrettyPrintError;
+
 #[cfg(test)]
 mod tests {
     use super::*;
