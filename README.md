@@ -1,6 +1,6 @@
 # prettyprint 
 
-Syntax highlighting with batteries included.
+Syntax highlighting library with batteries included.
 
 ## Quick start
 
