@@ -41,7 +41,7 @@ It's true. You're welcome.
 
 Add this to your `Cargo.toml`:
 
-```
+```TOML
 prettyprint = "*"
 ```
 
