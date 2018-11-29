@@ -13,9 +13,6 @@ use printer::{InteractivePrinter, Printer};
 #[cfg(windows)]
 use ansi_term;
 
-// use assets::PRETTYPRINT_THEME_DEFAULT;
-// use errors::*;
-// use line_range::{LineRange, LineRanges};
 use line_range::LineRanges;
 use style::{OutputComponent, OutputComponents, OutputWrap};
 use syntax_mapping::SyntaxMapping;
@@ -38,11 +35,12 @@ impl Default for PagingMode {
 pub struct PrettyPrint {
     // This is a hack, because we can not use skip right now
     // See https://github.com/colin-kiegel/rust-derive-builder/issues/110
-    /// The explicitly configured language, if any
+    /// Language for syntax highlighting
     #[builder(default = "\"unknown\".to_string()")]
     language: String,
 
-    /// Whether or not to show/replace non-printable characters like space, tab and newline.
+    /// Whether or not to show/replace non-printable
+    /// characters like space, tab and newline.
     #[builder(default = "false")]
     show_nonprintable: bool,
 
@@ -51,7 +49,8 @@ pub struct PrettyPrint {
     term_width: usize,
 
     /// The width of tab characters.
-    /// Currently, a value of 0 will cause tabs to be passed through without expanding them.
+    /// Currently, a value of 0 will cause tabs to be
+    /// passed through without expanding them.
     #[builder(default = "0")]
     tab_width: usize,
 

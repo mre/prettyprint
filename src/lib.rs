@@ -53,12 +53,12 @@ mod errors {
 mod tests {
     use super::*;
 
-    // /// Pretty prints its own code
-    // #[test]
-    // fn it_works() {
-    //     let printer = PrettyPrinter::default().build().unwrap();
-    //     printer.file("src/lib.rs").unwrap();
-    // }
+    /// Pretty prints its own code
+    #[test]
+    fn it_works() {
+        let printer = PrettyPrinter::default().build().unwrap();
+        printer.file("fixtures/fib.rs").unwrap();
+    }
 
     /// Pretty prints its own code with some more formatting shenanigans
     #[test]
