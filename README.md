@@ -1,6 +1,6 @@
-# prettyprint - syntax highlighting with batteries included
+# prettyprint 
 
-...a surprisingly creative name for a basic syntax highlighting package.
+Syntax highlighting with batteries included.
 
 ## Quick start
 
