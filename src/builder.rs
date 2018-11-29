@@ -38,9 +38,11 @@ impl Default for PagingMode {
 #[derive(Default, Builder, Debug)]
 #[builder(name = "PrettyPrinter", setter(into))]
 pub struct PrettyPrint {
+    // This is a hack, because we can not use skip right now
+    // See https://github.com/colin-kiegel/rust-derive-builder/issues/110
     /// The explicitly configured language, if any
-    #[builder(default = "None")]
-    language: Option<String>,
+    #[builder(default = "\"unknown\".to_string()")]
+    language: String,
 
     /// Whether or not to show/replace non-printable characters like space, tab and newline.
     #[builder(default = "false")]
@@ -140,6 +142,11 @@ impl PrettyPrint {
         let assets = HighlightingAssets::new();
         let mut reader = input_file.get_reader()?;
 
+        let lang_opt = match self.language.as_ref() {
+            "unknown" => None,
+            s => Some(s.to_string()),
+        };
+
         // This is faaaar from ideal, I know.
         let mut printer = InteractivePrinter::new(
             &assets,
@@ -150,7 +157,7 @@ impl PrettyPrint {
             self.colored_output,
             self.true_color,
             self.term_width,
-            self.language.clone(),
+            lang_opt,
             self.syntax_mapping.clone(),
             self.tab_width,
             self.show_nonprintable,

@@ -72,6 +72,7 @@ mod tests {
             .header(true)
             .grid(true)
             .paging_mode(PagingMode::Never)
+            .language("ruby")
             .build()
             .unwrap();
 
