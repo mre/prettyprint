@@ -21,7 +21,6 @@ extern crate directories;
 extern crate encoding;
 extern crate shell_words;
 extern crate syntect;
-extern crate wild;
 
 mod assets;
 mod builder;
