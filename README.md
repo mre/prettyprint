@@ -58,7 +58,7 @@ When writing a command-line tool that prints text however, you might be looking 
 * File headers
 * Windows support
 
-`prettyprint` offers all of this in one crate.  
+`prettyprint` offers all of this in one crate (thanks to [bat](https://github.com/sharkdp/bat/)).  
 
 ## Known limitations
 
