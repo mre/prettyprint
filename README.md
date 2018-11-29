@@ -37,6 +37,14 @@ printer.string_with_header(example, "fib.rb")?;
 "What!? It can also print strings, Matthias? That's insane."  
 It's true. You're welcome.
 
+## Installation
+
+Add this to your `Cargo.toml`:
+
+```
+prettyprint = "*"
+```
+
 ## But why?
 
 [`syntect`](https://github.com/trishume/syntect/) is a great package for highlighting text.  
