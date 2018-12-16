@@ -1,5 +1,7 @@
 # prettyprint 
 
+![Documentation](https://docs.rs/prettyprint/badge.svg)
+
 Syntax highlighting library with batteries included.
 
 ## Quick start
