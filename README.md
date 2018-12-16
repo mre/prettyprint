@@ -1,6 +1,6 @@
 # prettyprint 
 
-![Documentation](https://docs.rs/prettyprint/badge.svg)
+[![Documentation](https://docs.rs/prettyprint/badge.svg)](https://docs.rs/prettyprint/)
 
 Syntax highlighting library with batteries included.
 
