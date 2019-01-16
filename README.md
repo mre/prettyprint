@@ -1,7 +1,7 @@
 # prettyprint 
 
 [![Documentation](https://docs.rs/prettyprint/badge.svg)](https://docs.rs/prettyprint/)
-
+[![Build Status](https://travis-ci.org/mre/prettyprint.svg?branch=master)](https://travis-ci.org/mre/prettyprint)
 Syntax highlighting library with batteries included.
 
 ## Quick start
