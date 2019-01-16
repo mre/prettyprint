@@ -35,7 +35,7 @@ mod style;
 mod syntax_mapping;
 mod terminal;
 
-pub use builder::{PagingMode, PrettyPrinter};
+pub use builder::{PagingMode, PrettyPrint, PrettyPrinter};
 // pub use style::OutputComponent;
 
 mod errors {

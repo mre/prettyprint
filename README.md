@@ -1,5 +1,9 @@
 # prettyprint 
 
+[![Documentation](https://docs.rs/prettyprint/badge.svg)](https://docs.rs/prettyprint/)
+[![Build Status](https://travis-ci.org/mre/prettyprint.svg?branch=master)](https://travis-ci.org/mre/prettyprint)  
+
+  
 Syntax highlighting library with batteries included.
 
 ## Quick start
@@ -58,7 +62,7 @@ When writing a command-line tool that prints text however, you might be looking 
 * File headers
 * Windows support
 
-`prettyprint` offers all of this in one crate.  
+`prettyprint` offers all of this in one crate (thanks to [bat](https://github.com/sharkdp/bat/)).  
 
 ## Known limitations
 

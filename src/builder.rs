@@ -30,6 +30,9 @@ impl Default for PagingMode {
     }
 }
 
+/// The main pretty print object.
+/// 
+/// This gets created through a builder.
 #[derive(Default, Builder, Debug)]
 #[builder(name = "PrettyPrinter", setter(into))]
 pub struct PrettyPrint {
@@ -108,6 +111,7 @@ pub struct PrettyPrint {
 }
 
 impl PrettyPrint {
+    /// Prints a file.
     pub fn file<T: Into<String>>(self, filename: T) -> Result<()> {
         let file_string = filename.into();
         let input = if file_string == "-" {
@@ -119,15 +123,17 @@ impl PrettyPrint {
         self.run_controller(input, None)
     }
 
+    /// Prints a string.
     pub fn string<T: Into<String>>(self, input: T) -> Result<()> {
         self.run_controller(InputFile::String(input.into()), None)
     }
 
+    /// Prints a string with a specific header.
     pub fn string_with_header<T: Into<String>>(self, input: T, header: T) -> Result<()> {
         self.run_controller(InputFile::String(input.into()), Some(header.into()))
     }
 
-    pub fn run_controller(
+    fn run_controller(
         &self,
         input_file: InputFile,
         header_overwrite: Option<String>,
