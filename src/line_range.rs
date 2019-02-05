@@ -1,4 +1,4 @@
-use errors::*;
+use crate::errors::*;
 
 #[derive(Debug, Clone)]
 pub struct LineRange {

@@ -1,5 +1,6 @@
 use ansi_term::Style;
-use printer::{Colors, InteractivePrinter};
+
+use crate::printer::{Colors, InteractivePrinter};
 
 #[derive(Clone)]
 pub struct DecorationText {

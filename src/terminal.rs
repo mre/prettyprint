@@ -2,7 +2,6 @@ extern crate ansi_colours;
 
 use ansi_term::Colour::{Fixed, RGB};
 use ansi_term::{self, Style};
-
 use syntect::highlighting::{self, FontStyle};
 
 pub fn to_ansi_color(color: highlighting::Color, true_color: bool) -> ansi_term::Colour {

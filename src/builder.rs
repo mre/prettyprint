@@ -1,22 +1,23 @@
 use std::collections::{BTreeMap, HashSet};
 use std::env;
 use std::io::Write;
-use syntect::highlighting::Theme;
 
-use assets::{HighlightingAssets, PRETTYPRINT_THEME_DEFAULT};
+use syntect::highlighting::Theme;
 use console::Term;
-use errors::*;
-use inputfile::{InputFile, InputFileReader};
-use line_range::RangeCheckResult;
-use output::OutputType;
-use printer::{InteractivePrinter, Printer};
+
+use crate::assets::{HighlightingAssets, PRETTYPRINT_THEME_DEFAULT};
+use crate::errors::*;
+use crate::inputfile::{InputFile, InputFileReader};
+use crate::line_range::RangeCheckResult;
+use crate::output::OutputType;
+use crate::printer::{InteractivePrinter, Printer};
 
 #[cfg(windows)]
 use ansi_term;
 
-use line_range::LineRanges;
-use style::{OutputComponent, OutputComponents, OutputWrap};
-use syntax_mapping::SyntaxMapping;
+use crate::line_range::LineRanges;
+use crate::style::{OutputComponent, OutputComponents, OutputWrap};
+use crate::syntax_mapping::SyntaxMapping;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum PagingMode {

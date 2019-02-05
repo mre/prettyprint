@@ -1,4 +1,4 @@
-use directories::ProjectDirs;
+use crate::directories::ProjectDirs;
 
 lazy_static! {
     pub static ref PROJECT_DIRS: ProjectDirs =

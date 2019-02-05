@@ -6,11 +6,10 @@ use syntect::dumps::{from_binary, from_reader};
 use syntect::highlighting::{Theme, ThemeSet};
 use syntect::parsing::{SyntaxReference, SyntaxSet};
 
-use dirs::PROJECT_DIRS;
-
-use errors::*;
-use inputfile::{InputFile, InputFileReader};
-use syntax_mapping::SyntaxMapping;
+use crate::dirs::PROJECT_DIRS;
+use crate::errors::*;
+use crate::inputfile::{InputFile, InputFileReader};
+use crate::syntax_mapping::SyntaxMapping;
 
 pub const PRETTYPRINT_THEME_DEFAULT: &str = "Monokai Extended";
 

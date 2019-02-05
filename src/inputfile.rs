@@ -3,7 +3,7 @@ use std::io::{self, BufRead, BufReader};
 
 use content_inspector::{self, ContentType};
 
-use errors::*;
+use crate::errors::*;
 
 pub struct InputFileReader<'a> {
     inner: Box<dyn BufRead + 'a>,

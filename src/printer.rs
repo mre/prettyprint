@@ -3,8 +3,6 @@ use std::vec::Vec;
 
 use ansi_term::Colour::Fixed;
 use ansi_term::Style;
-use style::OutputComponents;
-use syntax_mapping::SyntaxMapping;
 
 use console::AnsiCodeIterator;
 
@@ -17,13 +15,15 @@ use content_inspector::ContentType;
 use encoding::all::{UTF_16BE, UTF_16LE};
 use encoding::{DecoderTrap, Encoding};
 
-use assets::HighlightingAssets;
-use decorations::{Decoration, GridBorderDecoration, LineNumberDecoration};
-use errors::*;
-use inputfile::{InputFile, InputFileReader};
-use preprocessor::{expand_tabs, replace_nonprintable};
-use style::OutputWrap;
-use terminal::{as_terminal_escaped, to_ansi_color};
+use crate::assets::HighlightingAssets;
+use crate::decorations::{Decoration, GridBorderDecoration, LineNumberDecoration};
+use crate::errors::*;
+use crate::inputfile::{InputFile, InputFileReader};
+use crate::preprocessor::{expand_tabs, replace_nonprintable};
+use crate::style::OutputComponents;
+use crate::style::OutputWrap;
+use crate::syntax_mapping::SyntaxMapping;
+use crate::terminal::{as_terminal_escaped, to_ansi_color};
 
 pub trait Printer {
     fn print_header(
@@ -370,7 +370,8 @@ impl<'a> Printer for InteractivePrinter<'a> {
                                                 .iter()
                                                 .map(|ref d| d
                                                     .generate(line_number, true, self)
-                                                    .text).collect::<Vec<String>>()
+                                                    .text)
+                                                .collect::<Vec<String>>()
                                                 .join(" ")
                                         ))
                                     } else {
