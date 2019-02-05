@@ -1,6 +1,7 @@
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
 use std::env;
 use std::io::Write;
+use syntect::highlighting::Theme;
 
 use assets::{HighlightingAssets, PRETTYPRINT_THEME_DEFAULT};
 use console::Term;
@@ -31,7 +32,7 @@ impl Default for PagingMode {
 }
 
 /// The main pretty print object.
-/// 
+///
 /// This gets created through a builder.
 #[derive(Default, Builder, Debug)]
 #[builder(name = "PrettyPrinter", setter(into))]
@@ -131,6 +132,12 @@ impl PrettyPrint {
     /// Prints a string with a specific header.
     pub fn string_with_header<T: Into<String>>(self, input: T, header: T) -> Result<()> {
         self.run_controller(InputFile::String(input.into()), Some(header.into()))
+    }
+
+    /// List all available themes for syntax highlighting
+    pub fn get_themes(&self) -> BTreeMap<String, Theme> {
+        let assets = HighlightingAssets::new();
+        assets.theme_set.themes
     }
 
     fn run_controller(

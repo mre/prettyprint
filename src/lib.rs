@@ -82,4 +82,12 @@ mod tests {
         "#;
         printer.string_with_header(example, "example.rb").unwrap();
     }
+
+    /// Show available syntax highlighting themes
+    #[test]
+    fn show_themes() {
+        let printer = PrettyPrinter::default().build().unwrap();
+        assert!(printer.get_themes().len() > 0);
+        println!("{:?}", printer.get_themes().keys());
+    }
 }

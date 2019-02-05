@@ -3,7 +3,7 @@ name = "prettyprint"
 license = "Apache-2.0/MIT"
 readme = "README.md"
 repository = "https://github.com/mre/prettyprint"
-version = "0.3.0"
+version = "0.4.0"
 authors = [
     "Matthias Endler <matthias-endler@gmx.net>",
 ]
