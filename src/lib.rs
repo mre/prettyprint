@@ -37,6 +37,7 @@ mod terminal;
 
 pub use crate::builder::{PagingMode, PrettyPrint, PrettyPrinter};
 
+#[allow(deprecated)] // remove it after error-chain/issues/254 resolved 🤗
 mod errors {
     error_chain! {
         foreign_links {

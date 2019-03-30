@@ -329,7 +329,7 @@ impl<'a> Printer for InteractivePrinter<'a> {
                         // Regular text.
                         (text, false) => {
                             let text = self.preprocess(
-                                text.trim_right_matches(|c| c == '\r' || c == '\n'),
+                                text.trim_end_matches(|c| c == '\r' || c == '\n'),
                                 &mut cursor_total,
                             );
 
