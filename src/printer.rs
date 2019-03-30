@@ -308,7 +308,7 @@ impl<'a> Printer for InteractivePrinter<'a> {
             }
         } else {
             for &(style, region) in regions.iter() {
-                let mut ansi_iterator = AnsiCodeIterator::new(region);
+                let ansi_iterator = AnsiCodeIterator::new(region);
                 let mut ansi_prefix: String = String::new();
                 for chunk in ansi_iterator {
                     match chunk {
