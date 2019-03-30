@@ -82,6 +82,31 @@ mod tests {
         printer.string_with_header(example, "example.rb").unwrap();
     }
 
+    #[test]
+    fn it_works_inside_loop() {
+        let printer = PrettyPrinter::default().language("markdown").build().unwrap();
+        for i in 0..7 {
+            printer.string(format!("## Heading {}", i)).unwrap();
+        }
+    }
+
+    #[test]
+    fn it_works_inside_closure() {
+        let printer = PrettyPrinter::default().language("markdown").build().unwrap();
+        let print_heading = |string| printer.string(format!("## {}", string)).expect("Printed");
+        print_heading("Thankyou for making a crate version of `bat` 🥺");
+    }
+
+    #[test]
+    fn it_can_print_multiple_times() {
+        let printer = PrettyPrinter::default().language("rust").build().unwrap();
+        printer.string("").unwrap();
+
+        printer.string("let example = Ok(());").unwrap();
+        printer.string_with_header("let example = Ok(());", "example.rs").unwrap();
+        printer.file("fixtures/fib.rs").unwrap();
+    }
+
     /// Show available syntax highlighting themes
     #[test]
     fn show_themes() {
@@ -89,4 +114,5 @@ mod tests {
         assert!(printer.get_themes().len() > 0);
         println!("{:?}", printer.get_themes().keys());
     }
+
 }
