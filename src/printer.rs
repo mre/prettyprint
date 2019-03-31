@@ -308,7 +308,7 @@ impl<'a> Printer for InteractivePrinter<'a> {
             }
         } else {
             for &(style, region) in regions.iter() {
-                let mut ansi_iterator = AnsiCodeIterator::new(region);
+                let ansi_iterator = AnsiCodeIterator::new(region);
                 let mut ansi_prefix: String = String::new();
                 for chunk in ansi_iterator {
                     match chunk {
@@ -329,7 +329,7 @@ impl<'a> Printer for InteractivePrinter<'a> {
                         // Regular text.
                         (text, false) => {
                             let text = self.preprocess(
-                                text.trim_right_matches(|c| c == '\r' || c == '\n'),
+                                text.trim_end_matches(|c| c == '\r' || c == '\n'),
                                 &mut cursor_total,
                             );
 

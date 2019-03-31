@@ -114,7 +114,7 @@ pub struct PrettyPrint {
 
 impl PrettyPrint {
     /// Prints a file.
-    pub fn file<T: Into<String>>(self, filename: T) -> Result<()> {
+    pub fn file<T: Into<String>>(&self, filename: T) -> Result<()> {
         let file_string = filename.into();
         let input = if file_string == "-" {
             InputFile::StdIn
@@ -126,12 +126,12 @@ impl PrettyPrint {
     }
 
     /// Prints a string.
-    pub fn string<T: Into<String>>(self, input: T) -> Result<()> {
+    pub fn string<T: Into<String>>(&self, input: T) -> Result<()> {
         self.run_controller(InputFile::String(input.into()), None)
     }
 
     /// Prints a string with a specific header.
-    pub fn string_with_header<T: Into<String>>(self, input: T, header: T) -> Result<()> {
+    pub fn string_with_header<T: Into<String>>(&self, input: T, header: T) -> Result<()> {
         self.run_controller(InputFile::String(input.into()), Some(header.into()))
     }
 
