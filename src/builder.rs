@@ -24,6 +24,7 @@ pub enum PagingMode {
     Always,
     QuitIfOneScreen,
     Never,
+    Error,
 }
 
 impl Default for PagingMode {

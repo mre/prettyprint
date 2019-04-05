@@ -12,6 +12,7 @@ use crate::errors::*;
 pub enum OutputType {
     Pager(Child),
     Stdout(io::Stdout),
+    Stderr(io::Stderr),
 }
 
 impl OutputType {
@@ -20,7 +21,8 @@ impl OutputType {
         Ok(match mode {
             Always => OutputType::try_pager(false, pager)?,
             QuitIfOneScreen => OutputType::try_pager(true, pager)?,
-            _ => OutputType::stdout(),
+            Never => OutputType::stdout(),
+            Error => OutputType::stderr(),
         })
     }
 
@@ -76,6 +78,10 @@ impl OutputType {
         OutputType::Stdout(io::stdout())
     }
 
+    fn stderr() -> Self {
+        OutputType::Stderr(io::stderr())
+    }
+
     pub fn handle(&mut self) -> Result<&mut Write> {
         Ok(match *self {
             OutputType::Pager(ref mut command) => command
@@ -83,6 +89,7 @@ impl OutputType {
                 .as_mut()
                 .chain_err(|| "Could not open stdin for pager")?,
             OutputType::Stdout(ref mut handle) => handle,
+            OutputType::Stderr(ref mut handle) => handle,
         })
     }
 }
