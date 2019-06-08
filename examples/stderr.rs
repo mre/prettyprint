@@ -1,8 +1,8 @@
-/// Run
-/// ```
-/// cargo run --example stderr 2> error.log
-/// ```
-/// then the `error.log` file should contain `ERROR: unexpected` with some gibberish 
+//! Run
+//! ```
+//! cargo run --example stderr 2> error.log
+//! ```
+//! then the `error.log` file should contain `ERROR: unexpected` with some gibberish 
 
 use prettyprint::{PrettyPrinter, PagingMode, PrettyPrintError};
 
