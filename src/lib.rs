@@ -85,7 +85,10 @@ mod tests {
 
     #[test]
     fn it_works_inside_loop() {
-        let printer = PrettyPrinter::default().language("markdown").build().unwrap();
+        let printer = PrettyPrinter::default()
+            .language("markdown")
+            .build()
+            .unwrap();
         for i in 0..7 {
             printer.string(format!("## Heading {}", i)).unwrap();
         }
@@ -93,7 +96,10 @@ mod tests {
 
     #[test]
     fn it_works_inside_closure() {
-        let printer = PrettyPrinter::default().language("markdown").build().unwrap();
+        let printer = PrettyPrinter::default()
+            .language("markdown")
+            .build()
+            .unwrap();
         let print_heading = |string| printer.string(format!("## {}", string)).expect("Printed");
         print_heading("Thankyou for making a crate version of `bat` 🥺");
     }
@@ -104,7 +110,9 @@ mod tests {
         printer.string("").unwrap();
 
         printer.string("let example = Ok(());").unwrap();
-        printer.string_with_header("let example = Ok(());", "example.rs").unwrap();
+        printer
+            .string_with_header("let example = Ok(());", "example.rs")
+            .unwrap();
         printer.file("fixtures/fib.rs").unwrap();
     }
 

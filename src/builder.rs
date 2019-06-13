@@ -2,8 +2,8 @@ use std::collections::{BTreeMap, HashSet};
 use std::env;
 use std::io::Write;
 
-use syntect::highlighting::Theme;
 use console::Term;
+use syntect::highlighting::Theme;
 
 use crate::assets::{HighlightingAssets, PRETTYPRINT_THEME_DEFAULT};
 use crate::errors::*;
@@ -114,8 +114,8 @@ pub struct PrettyPrint {
 }
 
 impl From<&PrettyPrint> for PrettyPrinter {
-	fn from(printer: &PrettyPrint) -> Self {
-		PrettyPrinter::default()
+    fn from(printer: &PrettyPrint) -> Self {
+        PrettyPrinter::default()
             .language(printer.language.clone())
             .show_nonprintable(printer.show_nonprintable)
             .term_width(printer.term_width)
@@ -134,7 +134,7 @@ impl From<&PrettyPrint> for PrettyPrinter {
             .pager(printer.pager.clone())
             .use_italic_text(printer.use_italic_text)
             .clone() // As expected, a lot of clone() 😂
-	}
+    }
 }
 
 impl PrettyPrint {
