@@ -2,8 +2,8 @@ use std::collections::{BTreeMap, HashSet};
 use std::env;
 use std::io::Write;
 
-use syntect::highlighting::Theme;
 use console::Term;
+use syntect::highlighting::Theme;
 
 use crate::assets::{HighlightingAssets, PRETTYPRINT_THEME_DEFAULT};
 use crate::errors::*;
@@ -113,7 +113,36 @@ pub struct PrettyPrint {
     use_italic_text: bool,
 }
 
+impl From<&PrettyPrint> for PrettyPrinter {
+    fn from(printer: &PrettyPrint) -> Self {
+        PrettyPrinter::default()
+            .language(printer.language.clone())
+            .show_nonprintable(printer.show_nonprintable)
+            .term_width(printer.term_width)
+            .tab_width(printer.tab_width)
+            .loop_through(printer.loop_through)
+            .colored_output(printer.colored_output)
+            .true_color(printer.true_color)
+            .grid(printer.grid)
+            .header(printer.header)
+            .line_numbers(printer.line_numbers)
+            .output_wrap(printer.output_wrap)
+            .paging_mode(printer.paging_mode)
+            .line_ranges(printer.line_ranges.clone())
+            .theme(printer.theme.clone())
+            .syntax_mapping(printer.syntax_mapping.clone())
+            .pager(printer.pager.clone())
+            .use_italic_text(printer.use_italic_text)
+            .clone() // As expected, a lot of clone() 😂
+    }
+}
+
 impl PrettyPrint {
+    /// Dynamically configure printer
+    pub fn configure(&self) -> PrettyPrinter {
+        self.into()
+    }
+
     /// Prints a file.
     pub fn file<T: Into<String>>(&self, filename: T) -> Result<()> {
         let file_string = filename.into();
