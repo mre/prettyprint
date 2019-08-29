@@ -82,7 +82,7 @@ impl OutputType {
         OutputType::Stderr(io::stderr())
     }
 
-    pub fn handle(&mut self) -> Result<&mut Write> {
+    pub fn handle(&mut self) -> Result<&mut dyn Write> {
         Ok(match *self {
             OutputType::Pager(ref mut command) => command
                 .stdin

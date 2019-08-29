@@ -231,7 +231,7 @@ impl PrettyPrint {
         &self,
         reader: InputFileReader,
         printer: &mut P,
-        writer: &mut Write,
+        writer: &mut dyn Write,
         input_file: &InputFile,
         header_overwrite: Option<String>,
     ) -> Result<()> {
@@ -245,7 +245,7 @@ impl PrettyPrint {
     fn print_file_ranges<'a, P: Printer>(
         &self,
         printer: &mut P,
-        writer: &mut Write,
+        writer: &mut dyn Write,
         mut reader: InputFileReader,
         line_ranges: &LineRanges,
     ) -> Result<()> {
