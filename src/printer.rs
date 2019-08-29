@@ -28,15 +28,15 @@ use crate::terminal::{as_terminal_escaped, to_ansi_color};
 pub trait Printer {
     fn print_header(
         &mut self,
-        handle: &mut Write,
+        handle: &mut dyn Write,
         file: &InputFile,
         header_overwrite: Option<String>,
     ) -> Result<()>;
-    fn print_footer(&mut self, handle: &mut Write) -> Result<()>;
+    fn print_footer(&mut self, handle: &mut dyn Write) -> Result<()>;
     fn print_line(
         &mut self,
         out_of_range: bool,
-        handle: &mut Write,
+        handle: &mut dyn Write,
         line_number: usize,
         line_buffer: &[u8],
     ) -> Result<()>;
@@ -136,7 +136,7 @@ impl<'a> InteractivePrinter<'a> {
         }
     }
 
-    fn print_horizontal_line(&mut self, handle: &mut Write, grid_char: char) -> Result<()> {
+    fn print_horizontal_line(&mut self, handle: &mut dyn Write, grid_char: char) -> Result<()> {
         if self.panel_width == 0 {
             writeln!(
                 handle,
@@ -164,7 +164,7 @@ impl<'a> InteractivePrinter<'a> {
 impl<'a> Printer for InteractivePrinter<'a> {
     fn print_header(
         &mut self,
-        handle: &mut Write,
+        handle: &mut dyn Write,
         file: &InputFile,
         header_overwrite: Option<String>,
     ) -> Result<()> {
@@ -223,7 +223,7 @@ impl<'a> Printer for InteractivePrinter<'a> {
         Ok(())
     }
 
-    fn print_footer(&mut self, handle: &mut Write) -> Result<()> {
+    fn print_footer(&mut self, handle: &mut dyn Write) -> Result<()> {
         if self.output_components.grid() && self.content_type.is_text() {
             self.print_horizontal_line(handle, '┴')
         } else {
@@ -234,7 +234,7 @@ impl<'a> Printer for InteractivePrinter<'a> {
     fn print_line(
         &mut self,
         out_of_range: bool,
-        handle: &mut Write,
+        handle: &mut dyn Write,
         line_number: usize,
         line_buffer: &[u8],
     ) -> Result<()> {
