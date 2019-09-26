@@ -49,11 +49,11 @@ impl HighlightingAssets {
         })
     }
 
-    fn get_integrated_syntaxset() -> SyntaxSet {
+    pub(crate) fn get_integrated_syntaxset() -> SyntaxSet {
         from_binary(include_bytes!("../assets/syntaxes.bin"))
     }
 
-    fn get_integrated_themeset() -> ThemeSet {
+    pub(crate) fn get_integrated_themeset() -> ThemeSet {
         from_binary(include_bytes!("../assets/themes.bin"))
     }
 

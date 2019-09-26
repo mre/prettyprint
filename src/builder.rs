@@ -3,7 +3,7 @@ use std::env;
 use std::io::Write;
 
 use console::Term;
-use syntect::highlighting::Theme;
+use syntect::{dumps::from_binary, highlighting::Theme};
 
 use crate::assets::{HighlightingAssets, PRETTYPRINT_THEME_DEFAULT};
 use crate::errors::*;
@@ -104,6 +104,14 @@ pub struct PrettyPrint {
     #[builder(default)]
     syntax_mapping: SyntaxMapping,
 
+    /// Load custom syntax-highlighter
+    #[builder(default = "None")]
+    load_syntax: Option<Vec<u8>>,
+
+    /// Load custom theme library
+    #[builder(default = "None")]
+    load_theme: Option<Vec<u8>>,
+
     /// Command to start the pager
     #[builder(default = "None")]
     pager: Option<String>,
@@ -167,7 +175,7 @@ impl PrettyPrint {
 
     /// List all available themes for syntax highlighting
     pub fn get_themes(&self) -> BTreeMap<String, Theme> {
-        let assets = HighlightingAssets::new();
+        let assets = self.get_assets();
         assets.theme_set.themes
     }
 
@@ -180,7 +188,7 @@ impl PrettyPrint {
         let _ = ansi_term::enable_ansi_support();
         // let interactive_output = atty::is(Stream::Stdout);
 
-        let assets = HighlightingAssets::new();
+        let assets = self.get_assets();
         let mut reader = input_file.get_reader()?;
 
         let lang_opt = match self.language.as_ref() {
@@ -211,6 +219,27 @@ impl PrettyPrint {
 
         self.print_file(reader, &mut printer, writer, &input_file, header_overwrite)?;
         Ok(())
+    }
+
+    fn get_assets(&self) -> HighlightingAssets {
+        let syntax_set = self.load_syntax.as_ref().map(|b| from_binary(b.as_slice()));
+        let theme_set = self.load_theme.as_ref().map(|b| from_binary(b.as_slice()));
+
+        match (syntax_set, theme_set) {
+            (Some(syntax_set), Some(theme_set)) => HighlightingAssets {
+                syntax_set,
+                theme_set,
+            },
+            (Some(syntax_set), None) => HighlightingAssets {
+                syntax_set,
+                theme_set: HighlightingAssets::get_integrated_themeset(),
+            },
+            (None, Some(theme_set)) => HighlightingAssets {
+                syntax_set: HighlightingAssets::get_integrated_syntaxset(),
+                theme_set,
+            },
+            (None, None) => HighlightingAssets::new(),
+        }
     }
 
     fn get_output_components(&self) -> OutputComponents {
