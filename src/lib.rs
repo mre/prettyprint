@@ -116,6 +116,30 @@ mod tests {
         printer.file("fixtures/fib.rs").unwrap();
     }
 
+    #[test]
+    fn it_can_load_syntaxset() {
+        let buffer: Vec<u8> = include_bytes!("../assets/syntaxes.bin").to_vec();
+        let printer = PrettyPrinter::default()
+            .language("rust")
+            .load_syntax(buffer)
+            .build()
+            .unwrap();
+
+        printer.file("fixtures/fib.rs").unwrap();
+    }
+
+    #[test]
+    fn it_can_load_themeset() {
+        let buffer = include_bytes!("../assets/themes.bin").to_vec();
+        let printer = PrettyPrinter::default()
+            .language("rust")
+            .load_theme(buffer)
+            .build()
+            .unwrap();
+
+        printer.file("fixtures/fib.rs").unwrap();
+    }
+
     /// Show available syntax highlighting themes
     #[test]
     fn show_themes() {

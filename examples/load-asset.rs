@@ -49,11 +49,11 @@ fn main() -> Result<(), PrettyPrintError> {
         }
         Some("theme") => {
             let print = PrettyPrinter::default()
-                .language(LANGUAGE)
+                .language("rust")
                 .load_theme(buffer.to_vec())
                 .build()?;
 
-            print.string(CODE)?;
+            print.string(include_str!("../fixtures/fib.rs"))?;
         }
         _ => help(),
     }
