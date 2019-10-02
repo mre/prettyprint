@@ -1,0 +1,27 @@
+%YAML 1.2
+---
+# http://www.sublimetext.com/docs/3/syntax.html
+name: Pikalang
+file_extensions: [pokeball] # https://github.com/groteworld/pikalang#file-extention
+scope: source.pikalang
+contexts:
+  main: # https://github.com/groteworld/pikalang#syntax
+    - match: \spi\s
+      scope: markup.underline.pikalang
+    - match: \ska\s
+      scope: markup.underline.pikalang
+    - match: \spika\s
+      scope: keyword.control.name
+    - match: \schu\s
+      scope: keyword.control.name
+    - match: \spipi\s
+      scope: keyword.operator.pikalang
+    - match: \spichu\s
+      scope: keyword.operator.pikalang
+    - match: \spikapi\s
+      scope: support.function.name
+    - match: \spikachu\s
+      scope: support.function.name
+    - match: "#.*$"
+      scope: comment.pikalang
+

@@ -1,3 +1,7 @@
+# Highlighting Assets
+**/*.bin
+
+# Rust
 /target
 **/*.rs.bk
 Cargo.lock
