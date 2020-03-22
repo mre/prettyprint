@@ -3,8 +3,12 @@
 [![Documentation](https://docs.rs/prettyprint/badge.svg)](https://docs.rs/prettyprint/)
 [![Build Status](https://travis-ci.org/mre/prettyprint.svg?branch=master)](https://travis-ci.org/mre/prettyprint)  
 
-  
 Syntax highlighting library with batteries included.
+
+> :warning: For new projects, you might want to use [`bat`](https://github.com/sharkdp/bat/) instead, 
+> which can be used as a library now. `prettyprint` is in maintenance mode now, which means it will 
+> not see any major updates anymore, but pull requests will still be reviewed and dependencies will 
+> be kept up-to-date for the time being. You might want consider migrating away, though.
 
 ## Quick start
 
