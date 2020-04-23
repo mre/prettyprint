@@ -6,9 +6,10 @@
 Syntax highlighting library with batteries included.
 
 > :warning: For new projects, you might want to use [`bat`](https://github.com/sharkdp/bat/) instead, 
-> which can be used as a library now. `prettyprint` is in maintenance mode now, which means it will 
+> which can be used as a [library now](https://github.com/sharkdp/bat/pull/936). 
+> `prettyprint` is in maintenance mode, which means it will 
 > not see any major updates anymore, but pull requests will still be reviewed and dependencies will 
-> be kept up-to-date for the time being. You might want consider migrating away, though.
+> be kept up-to-date for the time being. You might want to consider migrating away eventually, though.
 
 ## Quick start
 
