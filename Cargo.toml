@@ -35,7 +35,7 @@ encoding = "0.2.33"
 shell-words = "1.0.0"
 lazy_static = "1.4.0"
 atty = "0.2.14"
-derive_builder = "0.9.0"
+derive_builder = "0.11.0"
 
 [dependencies.syntect]
 version = "4.1.0"
